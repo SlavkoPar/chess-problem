@@ -6,6 +6,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+## Try It
+
+[Create chess problem](https://slavkopar.github.io/chess-problem/)
+
 ### `npm start`
 
 Runs the app in the development mode.\
