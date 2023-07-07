@@ -29,7 +29,7 @@ const NextPosition: React.FC<IProps> = ({ addFen, addProblem, testFen }: IProps)
     if (!testFen)
       chessPosition.clear();
 
-    const Pieces = ['K', 'Q', 'P', 'N', 'k', 'p', 'n'] // put white king at the start, put black kind behind all the white pieces
+    const Pieces = ['K', 'Q', 'P', 'N', 'k', 'p', 'n'] // put white king at the start, put black kink behind all the white pieces
     const board = [
       // 'a4', 'b4', 'c4',
       // 'a3', 'b3', 'c3',
@@ -139,7 +139,7 @@ const NextPosition: React.FC<IProps> = ({ addFen, addProblem, testFen }: IProps)
                 const fen = chessPosition.fen()
                 console.log('------', position, '---', fen);
                 addFen(fen);
-                await sleep(10);
+                await sleep(1);
                 const firstMove = checkmateIn2()
                 if (firstMove) {
                   addProblem(fen, firstMove);
