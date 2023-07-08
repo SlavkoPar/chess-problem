@@ -1,12 +1,30 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 import Chessboard from "chessboardjsx";
 import { ChessInstance, ShortMove } from "chess.js/index";
 import NextPosition from "./NextPosition";
+import { actions } from "./enums";
 
 const { Chess } = require("chess.js");
 
+export type TProblem = {
+  loading: boolean;
+  fen: unknown & string;
+  isCheckmate: boolean;
+  firstMove: string;
+};
+
+export type FindProblem = {
+  action: string;
+  pieces: string[];
+  fromSquare: string;
+  toSquare: string;
+};
+
 const App: React.FC = () => {
+
+  const getPositions: Worker = useMemo(() => new Worker(new URL("./Thread.ts", import.meta.url)), []);
+
   const [chess] = useState<ChessInstance>(
     //new Chess("8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1")
     new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
@@ -47,6 +65,43 @@ const App: React.FC = () => {
   //   }
   // }
 
+  useEffect(() => {
+    if (window.Worker) {
+      const request = {
+        action: actions.findProblem,
+        pieces: ['K', 'Q', 'P', 'N', 'k', 'p', 'n'], // put white king at the start, put black kink behind all the white pieces
+        fromSquare: '',
+        toSquare: ''
+      } as FindProblem;
+
+      getPositions.postMessage(JSON.stringify(request));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (window.Worker) {
+      getPositions.onmessage = (e: MessageEvent<string>) => {
+        const response = JSON.parse(e.data) as unknown as TProblem;
+        // console.log({ response });
+
+        setFen(response.fen)
+
+        if (response.isCheckmate) {
+          setChessPositions(arr => [...arr, response.fen])
+          setFirstMove(arr => [...arr, response.firstMove])
+        }
+        /*
+        setProfileList((prev) => ({
+          ...prev,
+          loading: response.loading,
+          list: response.list,
+          page: response.page,
+        }));
+        */
+      };
+    }
+  }, [getPositions]);
 
   // console.log(chessPositions);
   console.log('rendering...')
@@ -55,8 +110,8 @@ const App: React.FC = () => {
     <>
       <Chessboard width={250} position={chess.fen()} />
 
-      <NextPosition addFen={addFen} addProblem={addProblem}/> {/* testFen={chess.fen()} */}
-
+      {/* <NextPosition addFen={addFen} addProblem={addProblem}/> */}
+       {/* testFen={chess.fen()} */}
 
       <div className="flex-center">
         <Chessboard width={250} position={fen} />
