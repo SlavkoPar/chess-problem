@@ -104,18 +104,20 @@ const App: React.FC = () => {
   }, [getPositions]);
 
   // console.log(chessPositions);
-  console.log('rendering...')
+  // console.log('rendering...')
 
   return (
     <>
       <Chessboard width={250} position={chess.fen()} />
+      <br/>
 
       {/* <NextPosition addFen={addFen} addProblem={addProblem}/> */}
        {/* testFen={chess.fen()} */}
 
       <div className="flex-center">
         <Chessboard width={250} position={fen} />
-        <div>{fen}</div>
+        <br/>
+        {/* <div>{fen}</div> */}
         {chessPositions.map((chessPos, i) =>
           <div key={i}>
             <Chessboard width={250} position={chessPos} />
