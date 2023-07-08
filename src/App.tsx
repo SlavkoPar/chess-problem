@@ -114,8 +114,10 @@ const App: React.FC = () => {
       {/* <NextPosition addFen={addFen} addProblem={addProblem}/> */}
        {/* testFen={chess.fen()} */}
 
+      <button type="button" onClick={() => { setChessPositions([])}} >Clear Checkmates</button>
+      <br/>
       <div className="flex-center">
-        <Chessboard width={250} position={fen} />
+        <Chessboard width={150} position={fen} />
         <br/>
         {/* <div>{fen}</div> */}
         {chessPositions.map((chessPos, i) =>
