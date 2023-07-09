@@ -50,7 +50,7 @@ self.onmessage = (e: MessageEvent<string>) => {
     if (findProblem.fromSquare !== "") {
 
         const checkmateIn2 = (): string | null => {
-            const whiteMoves1 = chessPosition.moves().filter((m: string) => !regexCheck.test(m) && !m.includes('x'));
+            const whiteMoves1 = chessPosition.moves().filter((m: string) => !regexCheck.test(m)); // && !m.includes('x'));
             let nMates1 = 0;
             let firstMove: string | null = null;
             for (const white1 of whiteMoves1) {
