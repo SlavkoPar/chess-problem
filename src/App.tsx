@@ -81,7 +81,7 @@ const App: React.FC = () => {
         nSquares: 5
       } as FindProblem;
 
-      boardFragment.postMessage(JSON.stringify(request));
+     // boardFragment.postMessage(JSON.stringify(request));
 
       const request2 = {
         action: actions.findProblem,
@@ -139,11 +139,11 @@ const App: React.FC = () => {
       <button type="button" onClick={() => { setChessPositions([])}} >Clear Checkmates</button>
       <br/>
       <div className="flex-center">
-        <Chessboard width={250} position={fen} />
+        {/* <Chessboard width={250} position={fen} /> */}
         <br/>
         <Chessboard width={250} position={fen2} />
         <br/>
-        {/* <div>{fen}</div> */}
+        <div>{fen}</div>
         {chessPositions.map((chessPos, i) =>
           <div key={i}>
             <Chessboard width={150} position={chessPos} />
