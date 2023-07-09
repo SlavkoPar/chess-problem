@@ -18,12 +18,13 @@ export type FindProblem = {
   action: string;
   pieces: string[];
   fromSquare: string;
-  toSquare: string;
+  nSquares: number;
 };
 
 const App: React.FC = () => {
 
-  const getPositions: Worker = useMemo(() => new Worker(new URL("./Thread.ts", import.meta.url)), []);
+  const boardFragment: Worker = useMemo(() => new Worker(new URL("./Thread.ts", import.meta.url)), []);
+  const boardFragment2: Worker = useMemo(() => new Worker(new URL("./Thread.ts", import.meta.url)), []);
 
   const [chess] = useState<ChessInstance>(
     //new Chess("8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1")
@@ -40,10 +41,16 @@ const App: React.FC = () => {
   }, [])
 
   const [fen, setFen] = useState(chess.fen());
+  const [fen2, setFen2] = useState(chess.fen());
 
   const addFen = useCallback((fen: string): void => {
     setFen(fen)
   }, [])
+
+  const addFen2 = useCallback((fen: string): void => {
+    setFen(fen2)
+  }, [])
+
 
   // const [chess, setChess] = useState<ChessInstance>(chessPosition);
 
@@ -70,18 +77,28 @@ const App: React.FC = () => {
       const request = {
         action: actions.findProblem,
         pieces: ['K', 'Q', 'P', 'N', 'k', 'p', 'n'], // put white king at the start, put black kink behind all the white pieces
-        fromSquare: '',
-        toSquare: ''
+        fromSquare: 'a8',
+        nSquares: 5
       } as FindProblem;
 
-      getPositions.postMessage(JSON.stringify(request));
+      boardFragment.postMessage(JSON.stringify(request));
+
+      const request2 = {
+        action: actions.findProblem,
+        pieces: ['K', 'Q', 'P', 'N', 'k', 'p', 'n'], // put white king at the start, put black kink behind all the white pieces
+        fromSquare: 'd8',
+        nSquares: 5
+      } as FindProblem;
+
+      boardFragment2.postMessage(JSON.stringify(request2));
+      
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (window.Worker) {
-      getPositions.onmessage = (e: MessageEvent<string>) => {
+      boardFragment.onmessage = (e: MessageEvent<string>) => {
         const response = JSON.parse(e.data) as unknown as TProblem;
         // console.log({ response });
 
@@ -91,17 +108,22 @@ const App: React.FC = () => {
           setChessPositions(arr => [...arr, response.fen])
           setFirstMove(arr => [...arr, response.firstMove])
         }
-        /*
-        setProfileList((prev) => ({
-          ...prev,
-          loading: response.loading,
-          list: response.list,
-          page: response.page,
-        }));
-        */
       };
     }
-  }, [getPositions]);
+
+    boardFragment2.onmessage = (e: MessageEvent<string>) => {
+      const response = JSON.parse(e.data) as unknown as TProblem;
+      // console.log({ response });
+
+      setFen2(response.fen)
+
+      if (response.isCheckmate) {
+        setChessPositions(arr => [...arr, response.fen])
+        setFirstMove(arr => [...arr, response.firstMove])
+      }
+    };
+
+  }, [boardFragment, boardFragment2]);
 
   // console.log(chessPositions);
   // console.log('rendering...')
@@ -117,12 +139,14 @@ const App: React.FC = () => {
       <button type="button" onClick={() => { setChessPositions([])}} >Clear Checkmates</button>
       <br/>
       <div className="flex-center">
-        <Chessboard width={150} position={fen} />
+        <Chessboard width={250} position={fen} />
+        <br/>
+        <Chessboard width={250} position={fen2} />
         <br/>
         {/* <div>{fen}</div> */}
         {chessPositions.map((chessPos, i) =>
           <div key={i}>
-            <Chessboard width={250} position={chessPos} />
+            <Chessboard width={150} position={chessPos} />
             <div>{firstMove[i]}</div>
           </div>)}
       </div>

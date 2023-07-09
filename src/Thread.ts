@@ -5,19 +5,15 @@ import { actions } from "./enums";
 
 const { Chess } = require("chess.js");
 
-const board = [
-    // 'a4', 'b4', 'c4',
-    // 'a3', 'b3', 'c3',
-    // 'a2', 'b2', 'c2',
-    // 'a1', 'b1', 'c1',
-    'a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8',
-    'a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7',
-    'a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6',
-    'a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5',
-    'a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4',
-    'a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3',
-    'a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2',
-    'a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1'
+const Board = [
+    ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'],
+    ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'],
+    ['a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6'],
+    ['a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5'],
+    ['a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4'],
+    ['a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3'],
+    ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'],
+    ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1']
 ]
 
 const regexCheck = new RegExp('[#+]$');
@@ -28,12 +24,30 @@ const chessPosition = new Chess();
 chessPosition.clear();
 
 self.onmessage = (e: MessageEvent<string>) => {
-    const data = JSON.parse(e.data) as FindProblem;
+    const findProblem = JSON.parse(e.data) as FindProblem;
 
-    if (data.action !== actions.findProblem)
+    if (findProblem.action !== actions.findProblem)
         return;
+    const { fromSquare, nSquares } = findProblem;
 
-    if (data.fromSquare === "" || data.toSquare === "") {
+    let index = 0;
+    let j = 0;
+    //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    for (; j < Board.length; j++) {
+        index = Board[j].indexOf(fromSquare);
+        if (index !== -1) {
+            break;
+        }
+    }
+    const board = [
+        ...Board[j + 0].slice(index, index + nSquares),
+        ...Board[j + 1].slice(index, index + nSquares),
+        ...Board[j + 2].slice(index, index + nSquares),
+        ...Board[j + 3].slice(index, index + nSquares),
+        ...Board[j + 4].slice(index, index + nSquares)
+    ]
+
+    if (findProblem.fromSquare !== "") {
 
         const checkmateIn2 = (): string | null => {
             const whiteMoves1 = chessPosition.moves().filter((m: string) => !regexCheck.test(m) && !m.includes('x'));
@@ -49,7 +63,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                     chessPosition.move(black);
                     // white 2
                     nMates2 = chessPosition.moves().filter((m: string) => regexCheckmate.test(m)).length;
-                     chessPosition.undo();
+                    chessPosition.undo();
                     if (nMates2 !== 1)
                         break; // second move is not checkmate or has more than 1 checkmate
                 }
@@ -99,7 +113,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                                     isCheckmate: firstMove != null,
                                     firstMove
                                 } as TProblem;
-                        
+
                                 self.postMessage(JSON.stringify(response));
                             }
                             else {
@@ -114,7 +128,7 @@ self.onmessage = (e: MessageEvent<string>) => {
             }
         }
 
-        getPosition([...data.pieces]);
+        getPosition([...findProblem.pieces]);
 
     }
 
