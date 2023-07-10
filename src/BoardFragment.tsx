@@ -14,8 +14,7 @@ const BoardFragment: React.FC<IProps> = ({fromSquare, nSquares }: IProps) => {
     new Worker(new URL('./Thread.ts', import.meta.url)), []
   );
 
-  const [chessPositions, setChessPositions] = useState<string[]>([])
-  const [firstMove, setFirstMove] = useState<string[]>([]);
+  const [chessPositions, setChessPositions] = useState<TProblem[]>([])
 
   const [fen, setFen] = useState("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1");
   
@@ -38,9 +37,8 @@ const BoardFragment: React.FC<IProps> = ({fromSquare, nSquares }: IProps) => {
         const response = JSON.parse(e.data) as unknown as TProblem;
         // console.log({ response });
         setFen(response.fen)
-        if (response.isCheckmate) {
-          setChessPositions(arr => [...arr, response.fen])
-          setFirstMove(arr => [...arr, response.firstMove])
+        if (response.firstMove !== null) {
+          setChessPositions(arr => [...arr, response])
         }
       };
     }
@@ -55,11 +53,11 @@ const BoardFragment: React.FC<IProps> = ({fromSquare, nSquares }: IProps) => {
       <br />
       <br />
       <div className="problems">
-        {chessPositions.map((fen, i) =>
+        {chessPositions.map((problem, i) =>
           <div key={i} className="row">
-            <Chessboard width={150} position={fen} />
-            <div>{fen}</div>
-            <div>{firstMove[i]}</div>
+            <Chessboard width={150} position={problem.fen} />
+            <div>{problem.fen}</div>
+            <div>{problem.firstMove}</div>
           </div>)}
       </div>
       <br />

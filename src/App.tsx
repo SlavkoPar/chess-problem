@@ -1,17 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Chessboard from "chessboardjsx";
-import { ChessInstance, ShortMove } from "chess.js/index";
-import NextPosition from "./NextPosition";
-import { actions } from "./enums";
+import { ChessInstance  } from "chess.js/index";
 import BoardFragment from "./BoardFragment";
 
 const { Chess } = require("chess.js");
 
 export type TProblem = {
-  loading: boolean;
   fen: unknown & string;
-  isCheckmate: boolean;
   firstMove: string;
 };
 

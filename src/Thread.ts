@@ -80,7 +80,7 @@ self.onmessage = (e: MessageEvent<string>) => {
             return nMates1 === 1 ? firstMove : null;
         }
 
-        //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+        // const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
         function getPosition(pieces: string[]): void {
             const piece = pieces.shift();
@@ -104,9 +104,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                                 console.log('------', position, '---', fen);
                                 const firstMove = checkmateIn2();
                                 const response = {
-                                    loading: false,
                                     fen,
-                                    isCheckmate: firstMove != null,
                                     firstMove
                                 } as TProblem;
 
