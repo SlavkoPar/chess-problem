@@ -36,3 +36,34 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  margin: 10px;
+}
+
+.problems {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.board-fragments {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+  align-items: flex-start;
+}
+
+.fragment {
+  border: 1px silver solid;
+  margin: 5px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+  align-items: center;
+  margin-left: 5px;
+}

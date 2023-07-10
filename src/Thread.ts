@@ -39,18 +39,19 @@ self.onmessage = (e: MessageEvent<string>) => {
             break;
         }
     }
+    const index2 = index + nSquares;
     const board = [
-        ...Board[j + 0].slice(index, index + nSquares),
-        ...Board[j + 1].slice(index, index + nSquares),
-        ...Board[j + 2].slice(index, index + nSquares),
-        ...Board[j + 3].slice(index, index + nSquares),
-        ...Board[j + 4].slice(index, index + nSquares)
+        ...Board[j + 0].slice(index, index2),
+        ...Board[j + 1].slice(index, index2),
+        ...Board[j + 2].slice(index, index2),
+        ...Board[j + 3].slice(index, index2),
+        ...Board[j + 4].slice(index, index2)
     ]
 
     if (findProblem.fromSquare !== "") {
 
         const checkmateIn2 = (): string | null => {
-            const whiteMoves1 = chessPosition.moves().filter((m: string) => !regexCheck.test(m)); // && !m.includes('x'));
+            const whiteMoves1 = chessPosition.moves().filter((m: string) => !regexCheck.test(m) && !m.includes('x'));
             let nMates1 = 0;
             let firstMove: string | null = null;
             for (const white1 of whiteMoves1) {
@@ -65,20 +66,16 @@ self.onmessage = (e: MessageEvent<string>) => {
                     nMates2 = chessPosition.moves().filter((m: string) => regexCheckmate.test(m)).length;
                     chessPosition.undo();
                     if (nMates2 !== 1)
-                        break; // second move is not checkmate or has more than 1 checkmate
+                        break; // second move is not checkmate or there are more than 1 checkmate
                 }
                 if (nMates2 === 1) {
                     console.log('checkmate at second move', white1)
                     nMates1++;
                     firstMove = white1;
                 }
-
-                if (nMates1 > 1)
-                    break;  // there are more than 1 first move that is a checkmate
                 chessPosition.undo();
-                if (nMates1 > 1)
+                if (nMates1 > 1) // there are more than 1 first move that is a checkmate
                     break;
-
             }
             return nMates1 === 1 ? firstMove : null;
         }
@@ -105,8 +102,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                             if (pieces.length === 0) {
                                 const fen = chessPosition.fen()
                                 console.log('------', position, '---', fen);
-                                const firstMove = checkmateIn2()
-
+                                const firstMove = checkmateIn2();
                                 const response = {
                                     loading: false,
                                     fen,
@@ -121,7 +117,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                             }
                             position.pop();
                             const z = chessPosition.remove(square);
-                            const fen2 = chessPosition.fen();
+                            // const fen2 = chessPosition.fen();
                         }
                     }
                 }
