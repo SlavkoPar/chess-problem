@@ -1,5 +1,5 @@
 export enum actions {
-    solveProblem = "solveProblem",
+    testFen = "testFen",
     findProblem = "findProblem",
   }
   

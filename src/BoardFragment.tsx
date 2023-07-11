@@ -6,9 +6,10 @@ import { FindProblem, TProblem } from "./App";
 interface IProps {
   fromSquare: string,
   nSquares: number;
+  testFen?: string; 
 }
 
-const BoardFragment: React.FC<IProps> = ({fromSquare, nSquares }: IProps) => {
+const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IProps) => {
 
   const getPositions: Worker = useMemo(() => 
     new Worker(new URL('./Thread.ts', import.meta.url)), []
@@ -16,15 +17,16 @@ const BoardFragment: React.FC<IProps> = ({fromSquare, nSquares }: IProps) => {
 
   const [chessPositions, setChessPositions] = useState<TProblem[]>([])
 
-  const [fen, setFen] = useState("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1");
+  const [fen, setFen] = useState(testFen??"3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1");
   
   useEffect(() => {
     if (window.Worker) {
       const request = {
-        action: actions.findProblem,
+        action: testFen ? actions.testFen : actions.findProblem,
         pieces: ['K', 'Q', 'P', 'N', 'k', 'p', 'n'], // put white king at the start, put black kink behind all the white pieces
         fromSquare,
-        nSquares 
+        nSquares,
+        testFen 
       } as FindProblem;
       getPositions.postMessage(JSON.stringify(request));
     }
@@ -37,7 +39,7 @@ const BoardFragment: React.FC<IProps> = ({fromSquare, nSquares }: IProps) => {
         const response = JSON.parse(e.data) as unknown as TProblem;
         // console.log({ response });
         setFen(response.fen)
-        if (response.firstMove !== null) {
+        if (response.firstMove) {
           setChessPositions(arr => [...arr, response])
         }
       };

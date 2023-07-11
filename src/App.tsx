@@ -16,6 +16,7 @@ export type FindProblem = {
   pieces: string[];
   fromSquare: string;
   nSquares: number;
+  testFen: string | undefined;
 };
 
 const App: React.FC = () => {
@@ -32,8 +33,9 @@ const App: React.FC = () => {
       <br/>
       <div className="board-fragments">
         {/* <BoardFragment fromSquare='a8' nSquares={5} /> */}
-        {/* <BoardFragment fromSquare='d8' nSquares={5} /> */}
-        <BoardFragment fromSquare='a5' nSquares={5} />
+        <BoardFragment fromSquare='d8' nSquares={5} />
+        {/* <BoardFragment fromSquare='a5' nSquares={5} /> */}
+        {/* testFen="8/8/8/KQP1N3/8/8/kp6/1n6 w - - 0 1" */}
         {/* <BoardFragment fromSquare='d5' nSquares={5} /> */}
       </div>
     </>
