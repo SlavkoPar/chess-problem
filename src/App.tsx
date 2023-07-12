@@ -36,6 +36,7 @@ const App: React.FC = () => {
         <BoardFragment fromSquare='d8' nSquares={5} />
         {/* <BoardFragment fromSquare='a5' nSquares={5} /> */}
         {/* testFen="8/8/8/KQP1N3/8/8/kp6/1n6 w - - 0 1" */}
+        {/* Qe6 mat 3KQNnk/5P2/8/8/7p/8/8/8 w - - 0 1 */} 
         {/* <BoardFragment fromSquare='d5' nSquares={5} /> */}
       </div>
     </>
