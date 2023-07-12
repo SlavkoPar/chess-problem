@@ -115,8 +115,7 @@ self.onmessage = (e: MessageEvent<string>) => {
         return nMates1 === 1 ? firstMove : null;
     }
 
-
-    // const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    let lastCheckmate: string | null = null;
 
     function getPosition(pieces: string[]): void {
         const piece = pieces.shift();
@@ -134,16 +133,33 @@ self.onmessage = (e: MessageEvent<string>) => {
                 }
                 else {
                     if (piecePlaced) {
+                        if (c === 'k') {
+                            lastCheckmate = null;
+                        }
                         position.push(square);
                         if (pieces.length === 0) {
                             const fen = chessPosition.fen()
                             console.log('------', position, '---', fen);
-                            const firstMove = checkmateIn2();
+                            let firstMove = checkmateIn2();
+                            const isCheckmate = firstMove !== null;
+                            if (isCheckmate) {
+                                if (firstMove === lastCheckmate) {
+                                    firstMove = null;
+                                }
+                                else {
+                                    lastCheckmate = firstMove;
+                                }
+                            }
                             const response = {
                                 fen,
                                 firstMove
                             } as TProblem;
                             self.postMessage(JSON.stringify(response));
+                            //if (isCheckmate) {
+                                // if white move (Qf7) is checkmate, 
+                                // then ignore every problem, after all black pieces moves (except king), 
+                                // that produces checkmate (Qf7)
+                            //}
                         }
                         else {
                             getPosition([...pieces]);
@@ -157,6 +173,7 @@ self.onmessage = (e: MessageEvent<string>) => {
         }
     }
 
+
     if (fromSquare === "") {
         console.log('Invalid fromSquare')
     }
@@ -167,7 +184,7 @@ self.onmessage = (e: MessageEvent<string>) => {
             fen: testFen,
             firstMove
         } as TProblem;
-            self.postMessage(JSON.stringify(response));
+        self.postMessage(JSON.stringify(response));
         console.timeEnd()
     }
     else {
