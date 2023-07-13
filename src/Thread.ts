@@ -18,8 +18,43 @@ const Board = [
 
 const regexCheck = new RegExp('[#+]$');
 const regexCheckmate = new RegExp('#$');
-const numbers = '111111112345678123456782222222333333344444445555555666666677777778888888';
-const letters = 'aaaaaaaabcdefghabcdefghbbbbbbbcccccccdddddddeeeeeeefffffffggggggghhhhhhh';
+const rows: Record<string, string> = {
+    '1': '45678',
+    '2': '5678',
+    '3': '678',
+    '4': '78',
+    '5': '8'
+}
+
+const cols: Record<string, string> = {
+    'a': 'defgh',
+    'b': 'efgh',
+    'c': 'fgh',
+    'd': 'gh',
+    'e': 'h'
+}
+
+const twoEmptyLines = (pieces: string[]): boolean => { // ['b1', 'd4', 'e4', 'h5']
+    const a = pieces.map(square => square.charAt(1)).sort();
+    for (let i = 0; i < a.length - 1; i++) {
+        if (!['6', '7', '8'].includes(a[i])) {
+            if (rows[a[i]].includes(a[i+1]))
+                return true;
+        }
+    }
+    const b = pieces.map(square => square.charAt(0)).sort();
+    for (let i = 0; i < b.length - 1; i++) {
+        if (!['f', 'g', 'h'].includes(b[i])) {
+            if (cols[b[i]].includes(b[i+1]))
+                return true;
+        }
+    }
+    return false;
+}
+// emptyLine = !numbers.includes(blackPieces.map(square => square.charAt(1)).sort().join(""));
+// if (!emptyLine) {
+//     emptyLine = !letters.includes(blackPieces.map(square => square.charAt(0)).sort().join(""));
+// }
 
 const position: string[] = [];
 
@@ -142,10 +177,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                         let emptyLine = false;
                         if (index > blackKingIndex) {
                             const blackPieces = position.slice(blackKingIndex, position.length);
-                            emptyLine = !numbers.includes(blackPieces.map(square => square.charAt(1)).sort().join(""));
-                            if (!emptyLine) {
-                                emptyLine = !letters.includes(blackPieces.map(square => square.charAt(0)).sort().join(""));
-                            }
+                            emptyLine = twoEmptyLines(blackPieces);
                         }
                         if (!emptyLine) {
                             if (pieces.length === 0) {
