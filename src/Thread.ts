@@ -18,6 +18,8 @@ const Board = [
 
 const regexCheck = new RegExp('[#+]$');
 const regexCheckmate = new RegExp('#$');
+const numbers = '111111112345678123456782222222333333344444445555555666666677777778888888';
+const letters = 'aaaaaaaabcdefghabcdefghbbbbbbbcccccccdddddddeeeeeeefffffffggggggghhhhhhh';
 
 const position: string[] = [];
 
@@ -29,22 +31,22 @@ self.onmessage = (e: MessageEvent<string>) => {
     if (!testFen)
         chessPosition.clear();
 
-    let index = 0;
+    let ind = 0;
     let j = 0;
     //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     for (; j < Board.length; j++) {
-        index = Board[j].indexOf(fromSquare);
-        if (index !== -1) {
+        ind = Board[j].indexOf(fromSquare);
+        if (ind !== -1) {
             break;
         }
     }
-    const index2 = index + nSquares;
+    const ind2 = ind + nSquares;
     const board = [
-        ...Board[j + 0].slice(index, index2),
-        ...Board[j + 1].slice(index, index2),
-        ...Board[j + 2].slice(index, index2),
-        ...Board[j + 3].slice(index, index2),
-        ...Board[j + 4].slice(index, index2)
+        ...Board[j + 0].slice(ind, ind2),
+        ...Board[j + 1].slice(ind, ind2),
+        ...Board[j + 2].slice(ind, ind2),
+        ...Board[j + 3].slice(ind, ind2),
+        ...Board[j + 4].slice(ind, ind2)
     ]
 
     const checkmateIn2WAS = (): string | null => {
@@ -77,9 +79,6 @@ self.onmessage = (e: MessageEvent<string>) => {
         }
         return nMates1 === 1 ? firstMove : null;
     }
-
-    // White can have more than 1 checkmates as the second move
-    // 8/8/8/KQP1N3/8/8/kp6/1n6 w - - 0 1, example on 1. Sd3 ... 2. (d4 and db2)
 
     const checkmateIn2 = (): string | null => {
         const whiteMoves1 = chessPosition.moves().filter((m: string) => !regexCheck.test(m) && !m.includes('x'));
@@ -115,54 +114,64 @@ self.onmessage = (e: MessageEvent<string>) => {
         return nMates1 === 1 ? firstMove : null;
     }
 
+    const blackKingIndex = findProblem.pieces.indexOf('k');
     let lastCheckmate: string | null = null;
 
-    function getPosition(pieces: string[]): void {
+    function getPosition(pieces: string[], index: number): void {
         const piece = pieces.shift();
         const c = piece!.charAt(0);
         const type = c.toLowerCase();
         const color = /[RNBKQP]/.test(c) ? 'w' : 'b';
+        const blackKing = c === 'k';
         // console.log(piece)
         for (const square of board) {
             if (!position.includes(square) && !((type === 'p' && (square.includes('8') || square.includes('1'))))) {
                 const piecePlaced = chessPosition.put({ type, color }, square);
                 if (chessPosition.isCheck() ||
-                    (c === 'k' && chessPosition.isAttacked(square, 'w')) ||
+                    (blackKing && chessPosition.isAttacked(square, 'w')) ||
                     (color === 'b' && chessPosition.isAttacked(position[0], 'b'))) { // white 'K' is at position[0]
                     const z = chessPosition.remove(square);
                 }
                 else {
                     if (piecePlaced) {
-                        if (c === 'k') {
+                        if (blackKing) {
                             lastCheckmate = null;
                         }
                         position.push(square);
-                        if (pieces.length === 0) {
-                            const fen = chessPosition.fen()
-                            console.log('------', position, '---', fen);
-                            let firstMove = checkmateIn2();
-                            const isCheckmate = firstMove !== null;
-                            if (isCheckmate) {
-                                if (firstMove === lastCheckmate) {
-                                    firstMove = null;
-                                }
-                                else {
-                                    lastCheckmate = firstMove;
-                                }
+
+                        let emptyLine = false;
+                        if (index > blackKingIndex) {
+                            const blackPieces = position.slice(blackKingIndex, position.length);
+                            emptyLine = !numbers.includes(blackPieces.map(square => square.charAt(1)).sort().join(""));
+                            if (!emptyLine) {
+                                emptyLine = !letters.includes(blackPieces.map(square => square.charAt(0)).sort().join(""));
                             }
-                            const response = {
-                                fen,
-                                firstMove
-                            } as TProblem;
-                            self.postMessage(JSON.stringify(response));
-                            //if (isCheckmate) {
+                        }
+                        if (!emptyLine) {
+                            if (pieces.length === 0) {
+                                const fen = chessPosition.fen()
+                                console.log('------', position, '---', fen);
+                                let firstMove = checkmateIn2();
+                                const isCheckmate = firstMove !== null;
+                                if (isCheckmate) {
+                                    if (firstMove === lastCheckmate) {
+                                        firstMove = null;
+                                    }
+                                    else {
+                                        lastCheckmate = firstMove;
+                                    }
+                                }
+                                const response = { fen, firstMove } as TProblem;
+                                self.postMessage(JSON.stringify(response));
+                                //if (isCheckmate) {
                                 // if white move (Qf7) is checkmate, 
                                 // then ignore every problem, after all black pieces moves (except king), 
                                 // that produces checkmate (Qf7)
-                            //}
-                        }
-                        else {
-                            getPosition([...pieces]);
+                                //}
+                            }
+                            else {
+                                getPosition([...pieces], index + 1);
+                            }
                         }
                         position.pop();
                         const z = chessPosition.remove(square);
@@ -172,7 +181,6 @@ self.onmessage = (e: MessageEvent<string>) => {
             }
         }
     }
-
 
     if (fromSquare === "") {
         console.log('Invalid fromSquare')
@@ -188,7 +196,7 @@ self.onmessage = (e: MessageEvent<string>) => {
         console.timeEnd()
     }
     else {
-        getPosition([...findProblem.pieces]);
+        getPosition([...findProblem.pieces], 0);
     }
 };
 
