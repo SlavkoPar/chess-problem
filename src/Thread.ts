@@ -38,14 +38,14 @@ const twoEmptyLines = (pieces: string[]): boolean => { // ['b1', 'd4', 'e4', 'h5
     const a = pieces.map(square => square.charAt(1)).sort();
     for (let i = 0; i < a.length - 1; i++) {
         if (!['6', '7', '8'].includes(a[i])) {
-            if (rows[a[i]].includes(a[i+1]))
+            if (rows[a[i]].includes(a[i + 1]))
                 return true;
         }
     }
     const b = pieces.map(square => square.charAt(0)).sort();
     for (let i = 0; i < b.length - 1; i++) {
         if (!['f', 'g', 'h'].includes(b[i])) {
-            if (cols[b[i]].includes(b[i+1]))
+            if (cols[b[i]].includes(b[i + 1]))
                 return true;
         }
     }
@@ -169,17 +169,22 @@ self.onmessage = (e: MessageEvent<string>) => {
                 }
                 else {
                     if (piecePlaced) {
+                        let whiteEmptyLine = false;
+                        let blackEmptyLine = false;
                         if (blackKing) {
                             lastCheckmate = null;
                         }
                         position.push(square);
-
-                        let emptyLine = false;
-                        if (index > blackKingIndex) {
-                            const blackPieces = position.slice(blackKingIndex, position.length);
-                            emptyLine = twoEmptyLines(blackPieces);
+                        //if (color === 'w' && position.length > 1) {
+                        if (index > 0 && index < blackKingIndex) {
+                            const whitePieces = position.slice(0, position.length); // TODO keep blackPieces at recursion level
+                            whiteEmptyLine = twoEmptyLines(whitePieces);
                         }
-                        if (!emptyLine) {
+                        else if (index > blackKingIndex) {
+                            const blackPieces = position.slice(blackKingIndex, position.length); // TODO keep blackPieces at recursion level
+                            blackEmptyLine = twoEmptyLines(blackPieces);
+                        }
+                        if (!whiteEmptyLine && !blackEmptyLine) {
                             if (pieces.length === 0) {
                                 const fen = chessPosition.fen()
                                 console.log('------', position, '---', fen);
