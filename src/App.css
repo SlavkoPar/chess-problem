@@ -43,9 +43,12 @@ body {
 
 .problems {
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  flex-direction: row;
+  /* width: 25%; */
+  height: 80vh;
+  overflow-y: auto;
   flex-wrap: wrap;
+  border: 1px solid blue;
 }
 
 .board-fragments {
@@ -58,6 +61,11 @@ body {
 .fragment {
   border: 1px silver solid;
   margin: 5px;
+  width: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }
 
 .row {
