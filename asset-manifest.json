@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/chess-problem/static/css/main.c2ca397c.css",
-    "main.js": "/chess-problem/static/js/main.bd9879ae.js",
-    "static/js/481.0678a1c2.chunk.js": "/chess-problem/static/js/481.0678a1c2.chunk.js",
+    "main.css": "/chess-problem/static/css/main.3278c6ad.css",
+    "main.js": "/chess-problem/static/js/main.703fa012.js",
+    "static/js/481.3f6588af.chunk.js": "/chess-problem/static/js/481.3f6588af.chunk.js",
     "static/js/787.669a778b.chunk.js": "/chess-problem/static/js/787.669a778b.chunk.js",
     "static/js/777.0e9f84b3.chunk.js": "/chess-problem/static/js/777.0e9f84b3.chunk.js",
     "index.html": "/chess-problem/index.html",
-    "main.c2ca397c.css.map": "/chess-problem/static/css/main.c2ca397c.css.map",
-    "main.bd9879ae.js.map": "/chess-problem/static/js/main.bd9879ae.js.map",
-    "481.0678a1c2.chunk.js.map": "/chess-problem/static/js/481.0678a1c2.chunk.js.map",
+    "main.3278c6ad.css.map": "/chess-problem/static/css/main.3278c6ad.css.map",
+    "main.703fa012.js.map": "/chess-problem/static/js/main.703fa012.js.map",
+    "481.3f6588af.chunk.js.map": "/chess-problem/static/js/481.3f6588af.chunk.js.map",
     "787.669a778b.chunk.js.map": "/chess-problem/static/js/787.669a778b.chunk.js.map",
     "777.0e9f84b3.chunk.js.map": "/chess-problem/static/js/777.0e9f84b3.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c2ca397c.css",
-    "static/js/main.bd9879ae.js"
+    "static/css/main.3278c6ad.css",
+    "static/js/main.703fa012.js"
   ]
 }
