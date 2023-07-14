@@ -30,7 +30,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
     if (window.Worker) {
       const request = {
         action: testFen ? actions.testFen : actions.findProblem,
-        pieces: ['K', 'Q', 'N', 'P', 'k', 'n', 'p'],
+        pieces: ['K', 'Q', 'R', 'B', 'N', 'P', 'P', 'P', 'P', 'k', 'r', 'b', 'n', 'p', 'p', 'p', 'p'],
         // put white king at the start
         // put black pices behind all the white pieces
         // put black king as the first of black pieces 
@@ -51,7 +51,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
         // console.log({ response });
         setFen(response.fen)
         if (response.firstMove) {
-          setChessPositions(arr => arr.length > 2 ? [...arr.slice(1, arr.length), response] : [...arr, response])
+          setChessPositions(arr => arr.length > 4 ? [...arr.slice(1, arr.length), response] : [...arr, response])
         }
       };
     }

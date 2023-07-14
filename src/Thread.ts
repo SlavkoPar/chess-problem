@@ -76,13 +76,10 @@ self.onmessage = (e: MessageEvent<string>) => {
         }
     }
     const ind2 = ind + nSquares;
-    const board = [
-        ...Board[j + 0].slice(ind, ind2),
-        ...Board[j + 1].slice(ind, ind2),
-        ...Board[j + 2].slice(ind, ind2),
-        ...Board[j + 3].slice(ind, ind2),
-        ...Board[j + 4].slice(ind, ind2)
-    ]
+    const board: string[] = [];
+    for (let i=0; i < nSquares; i++) {
+        board.push(...Board[j+i].slice(ind, ind2));
+    }
 
     const checkmateIn2WAS = (): string | null => {
         const whiteMoves1 = chessPosition.moves().filter((m: string) => !regexCheck.test(m) && !m.includes('x'));
@@ -187,7 +184,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                         if (!whiteEmptyLine && !blackEmptyLine) {
                             if (pieces.length === 0) {
                                 const fen = chessPosition.fen()
-                                // console.log('------', position, '---', fen);
+                                console.log('------', position, '---', fen);
                                 let firstMove = checkmateIn2();
                                 const isCheckmate = firstMove !== null;
                                 if (isCheckmate) {
