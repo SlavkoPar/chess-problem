@@ -61,7 +61,7 @@ body {
 .fragment {
   border: 1px silver solid;
   margin: 5px;
-  width: 230px;
+  width: 250px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -74,4 +74,6 @@ body {
   margin-bottom: 5px;
   align-items: center;
   margin-left: 5px;
+  border: 1px solid silver;
+  width: 90%
 }

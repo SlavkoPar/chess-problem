@@ -34,28 +34,6 @@ const cols: Record<string, string> = {
     'e': 'h'
 }
 
-const twoEmptyLines = (pieces: string[]): boolean => { // ['b1', 'd4', 'e4', 'h5']
-    const a = pieces.map(square => square.charAt(1)).sort();
-    for (let i = 0; i < a.length - 1; i++) {
-        if (!['6', '7', '8'].includes(a[i])) {
-            if (rows[a[i]].includes(a[i + 1]))
-                return true;
-        }
-    }
-    const b = pieces.map(square => square.charAt(0)).sort();
-    for (let i = 0; i < b.length - 1; i++) {
-        if (!['f', 'g', 'h'].includes(b[i])) {
-            if (cols[b[i]].includes(b[i + 1]))
-                return true;
-        }
-    }
-    return false;
-}
-// emptyLine = !numbers.includes(blackPieces.map(square => square.charAt(1)).sort().join(""));
-// if (!emptyLine) {
-//     emptyLine = !letters.includes(blackPieces.map(square => square.charAt(0)).sort().join(""));
-// }
-
 const position: string[] = [];
 
 self.onmessage = (e: MessageEvent<string>) => {
@@ -77,8 +55,8 @@ self.onmessage = (e: MessageEvent<string>) => {
     }
     const ind2 = ind + nSquares;
     const board: string[] = [];
-    for (let i=0; i < nSquares-j; i++) {
-        board.push(...Board[j+i].slice(ind, ind2));
+    for (let i = 0; i < nSquares - j; i++) {
+        board.push(...Board[j + i].slice(ind, ind2));
     }
 
     const checkmateIn2WAS = (): string | null => {
@@ -110,6 +88,45 @@ self.onmessage = (e: MessageEvent<string>) => {
                 break;
         }
         return nMates1 === 1 ? firstMove : null;
+    }
+
+    // inside of white or black pieces
+    const twoEmptyLines = (pieces: string[]): boolean => { // ['b1', 'd4', 'e4', 'h5']
+        const a = pieces.map(square => square.charAt(1)).sort();
+        for (let i = 0; i < a.length - 1; i++) {
+            if (!['6', '7', '8'].includes(a[i])) {
+                if (rows[a[i]].includes(a[i + 1]))
+                    return true;
+            }
+        }
+        const b = pieces.map(square => square.charAt(0)).sort();
+        for (let i = 0; i < b.length - 1; i++) {
+            if (!['f', 'g', 'h'].includes(b[i])) {
+                if (cols[b[i]].includes(b[i + 1]))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    const colNumber: Record<string, number> = {
+        'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6,
+        'g': 7,
+        'h': 8
+    }
+    const columns = "abcdefgh";
+
+    // between white pieces and black king
+    const twoEmptyLinesWhitesBlacks = (whitePieces: string[], blackPieces: string[]): boolean => {
+        const whiteMaxI = Math.max(...whitePieces.map(square => parseInt(square.charAt(1))));
+        const blackMinI = Math.min(...blackPieces.map(square => parseInt(square.charAt(1))));
+        if (Math.abs(whiteMaxI - blackMinI) > 1)
+            return true;
+        const whiteMaxJ = Math.max(...whitePieces.map(square => columns.indexOf(square.charAt(0))));
+        const blackMinJ = Math.min(...blackPieces.map(square => columns.indexOf(square.charAt(0))));
+        if (Math.abs(whiteMaxJ - blackMinJ) > 1)
+            return true;
+        return false;
     }
 
     const checkmateIn2 = (): string | null => {
@@ -166,8 +183,8 @@ self.onmessage = (e: MessageEvent<string>) => {
                 }
                 else {
                     if (piecePlaced) {
-                        let whiteEmptyLine = false;
-                        let blackEmptyLine = false;
+                        let whiteEmptyLines = false;
+                        let blackEmptyLines = false;
                         if (blackKing) {
                             lastCheckmate = null;
                         }
@@ -175,13 +192,19 @@ self.onmessage = (e: MessageEvent<string>) => {
                         //if (color === 'w' && position.length > 1) {
                         if (index > 0 && index < blackKingIndex) {
                             const whitePieces = position.slice(0, position.length); // TODO keep blackPieces at recursion level
-                            whiteEmptyLine = twoEmptyLines(whitePieces);
+                            whiteEmptyLines = twoEmptyLines(whitePieces);
                         }
-                        else if (index > blackKingIndex) {
+                        else if (index >= blackKingIndex) {
                             const blackPieces = position.slice(blackKingIndex, position.length); // TODO keep blackPieces at recursion level
-                            blackEmptyLine = twoEmptyLines(blackPieces);
+                            if (blackPieces.length > 1) {
+                                blackEmptyLines = twoEmptyLines(blackPieces);
+                            }
+                            if (!blackEmptyLines) {
+                                const whitePieces = position.slice(0, blackKingIndex);
+                                blackEmptyLines = twoEmptyLinesWhitesBlacks(whitePieces, blackPieces);
+                            }
                         }
-                        if (!whiteEmptyLine && !blackEmptyLine) {
+                        if (!whiteEmptyLines && !blackEmptyLines) {
                             if (pieces.length === 0) {
                                 const fen = chessPosition.fen()
                                 console.log('------', position, '---', fen);

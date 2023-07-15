@@ -51,7 +51,9 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
         // console.log({ response });
         setFen(response.fen)
         if (response.firstMove) {
-          setChessPositions(arr => arr.length > 4 ? [...arr.slice(1, arr.length), response] : [...arr, response])
+            setChessPositions(arr => (arr.length > 4 && scrollToBottom) 
+              ? [...arr.slice(1, arr.length), response] 
+              : [...arr, response]);
         }
       };
     }
