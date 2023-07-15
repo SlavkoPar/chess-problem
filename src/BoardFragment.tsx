@@ -30,7 +30,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
     if (window.Worker) {
       const request = {
         action: testFen ? actions.testFen : actions.findProblem,
-        pieces: ['K', 'Q', 'R', 'B', 'N', 'P', 'P', 'P', 'P', 'k', 'r', 'b', 'n', 'p', 'p', 'p', 'p'],
+        pieces: ['K', 'Q', 'R', 'N', 'k'],
         // put white king at the start
         // put black pices behind all the white pieces
         // put black king as the first of black pieces 

@@ -77,7 +77,7 @@ self.onmessage = (e: MessageEvent<string>) => {
     }
     const ind2 = ind + nSquares;
     const board: string[] = [];
-    for (let i=0; i < nSquares; i++) {
+    for (let i=0; i < nSquares-j; i++) {
         board.push(...Board[j+i].slice(ind, ind2));
     }
 
