@@ -18,7 +18,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
   const [chessPositions, setChessPositions] = useState<TProblem[]>([])
 
   const [fen, setFen] = useState(testFen ?? "3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1");
-
+  
   const [scrollToBottom, setScrollToBottom] = useState(true);
   const handleChangeScroll = () => {
     setScrollToBottom(!scrollToBottom);
