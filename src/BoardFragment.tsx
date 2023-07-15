@@ -51,13 +51,13 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
         // console.log({ response });
         setFen(response.fen)
         if (response.firstMove) {
-            setChessPositions(arr => (arr.length > 4 && scrollToBottom) 
+            setChessPositions(arr => (arr.length > 1 && scrollToBottom) 
               ? [...arr.slice(1, arr.length), response] 
               : [...arr, response]);
         }
       };
     }
-  }, [getPositions]);
+  }, [getPositions, scrollToBottom]);
 
   useEffect(() => {
     // bottomRef.current?.lastElementChild?.scrollIntoView({behavior: 'smooth'});

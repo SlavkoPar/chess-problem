@@ -207,7 +207,6 @@ self.onmessage = (e: MessageEvent<string>) => {
                         if (!whiteEmptyLines && !blackEmptyLines) {
                             if (pieces.length === 0) {
                                 const fen = chessPosition.fen()
-                                console.log('------', position, '---', fen);
                                 let firstMove = checkmateIn2();
                                 const isCheckmate = firstMove !== null;
                                 if (isCheckmate) {
@@ -216,6 +215,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                                     }
                                     else {
                                         lastCheckmate = firstMove;
+                                        console.log('------', position, '---', fen);
                                     }
                                 }
                                 const response = { fen, firstMove } as TProblem;
