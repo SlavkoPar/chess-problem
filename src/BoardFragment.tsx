@@ -11,7 +11,7 @@ interface IProps {
 
 const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IProps) => {
 
-  const getPositions: Worker = useMemo(() =>
+  const thread: Worker = useMemo(() =>
     new Worker(new URL('./Thread.ts', import.meta.url)), []
   );
 
@@ -39,14 +39,14 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
         nSquares,
         testFen
       } as FindProblem;
-      getPositions.postMessage(JSON.stringify(request));
+      thread.postMessage(JSON.stringify(request));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (window.Worker) {
-      getPositions.onmessage = (e: MessageEvent<string>) => {
+    if (window.Worker && thread.onmessage === null) {
+      thread.onmessage = (e: MessageEvent<string>) => {
         const response = JSON.parse(e.data) as unknown as TProblem;
         // console.log({ response });
         setFen(response.fen)
@@ -57,7 +57,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
         }
       };
     }
-  }, [getPositions, scrollToBottom]);
+  }, [thread, scrollToBottom]);
 
   useEffect(() => {
     // bottomRef.current?.lastElementChild?.scrollIntoView({behavior: 'smooth'});
@@ -88,8 +88,8 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
         {chessPositions.map((problem, i) =>
           <div key={i} className="row">
             <Chessboard width={150} position={problem.fen} />
-            <div style={{ fontSize: '0.7rem' }}>{problem.fen}</div>
-            <div style={{ fontSize: '0.8rem' }}>{problem.firstMove}</div>
+            <div>{problem.fen}</div>
+            <div>{problem.firstMove}</div>
           </div>)}
       </div>
       <br />

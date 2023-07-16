@@ -109,11 +109,6 @@ self.onmessage = (e: MessageEvent<string>) => {
         return false;
     }
 
-    const colNumber: Record<string, number> = {
-        'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6,
-        'g': 7,
-        'h': 8
-    }
     const columns = "abcdefgh";
 
     // between white pieces and black king
@@ -176,15 +171,17 @@ self.onmessage = (e: MessageEvent<string>) => {
         for (const square of board) {
             if (!position.includes(square) && !((type === 'p' && (square.includes('8') || square.includes('1'))))) {
                 const piecePlaced = chessPosition.put({ type, color }, square);
-                if (chessPosition.isCheck() ||
+                const invalidPos = chessPosition.isCheck() ||
                     (blackKing && chessPosition.isAttacked(square, 'w')) ||
-                    (color === 'b' && chessPosition.isAttacked(position[0], 'b'))) { // white 'K' is at position[0]
+                    (color === 'b' && chessPosition.isAttacked(position[0], 'b')); // white 'K' is at position[0]
+                if (invalidPos) {
                     const z = chessPosition.remove(square);
                 }
                 else {
                     if (piecePlaced) {
                         let whiteEmptyLines = false;
                         let blackEmptyLines = false;
+                        let whiteHasCheck = false;
                         if (blackKing) {
                             lastCheckmate = null;
                         }
@@ -203,8 +200,12 @@ self.onmessage = (e: MessageEvent<string>) => {
                                 const whitePieces = position.slice(0, blackKingIndex);
                                 blackEmptyLines = twoEmptyLinesWhitesBlacks(whitePieces, blackPieces);
                             }
+                            if (index === blackKingIndex) {
+                                // ignore if white has no check at the first move
+                                whiteHasCheck = chessPosition.isAttacked(square, 'w')
+                            }
                         }
-                        if (!whiteEmptyLines && !blackEmptyLines) {
+                        if (!whiteEmptyLines && !blackEmptyLines && !whiteHasCheck) {
                             if (pieces.length === 0) {
                                 const fen = chessPosition.fen()
                                 let firstMove = checkmateIn2();

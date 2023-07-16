@@ -21,7 +21,6 @@ export type FindProblem = {
 
 const App: React.FC = () => {
 
-
   const [chess] = useState<ChessInstance>(
     //new Chess("8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1")
     //new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
@@ -34,8 +33,8 @@ const App: React.FC = () => {
       <br/>
       <div className="board-fragments">
         <BoardFragment fromSquare='a8' nSquares={8} />
-        <BoardFragment fromSquare='a6' nSquares={8} />
-        <BoardFragment fromSquare='a4' nSquares={8} />
+        {/* <BoardFragment fromSquare='a6' rows={2} nSquares={8} /> */}
+        {/* <BoardFragment fromSquare='a4' rows={4} nSquares={8} /> */}
         {/* <BoardFragment fromSquare='a5' nSquares={5} /> */}
         {/* testFen="8/8/8/KQP1N3/8/8/kp6/1n6 w - - 0 1" */}
         {/* Qe6 mat 3KQNnk/5P2/8/8/7p/8/8/8 w - - 0 1 */} 

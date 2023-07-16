@@ -39,6 +39,7 @@
 
 body {
   margin: 10px;
+  font-size: 0.8rem;
 }
 
 .problems {
@@ -71,9 +72,9 @@ body {
 .row {
   display: flex;
   flex-direction: column;
-  margin-bottom: 5px;
   align-items: center;
-  margin-left: 5px;
+  justify-content: center;
+  margin: 5px;
   border: 1px solid silver;
-  width: 90%
+  width: 90%;
 }
