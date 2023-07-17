@@ -18,7 +18,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
   const [chessPositions, setChessPositions] = useState<TProblem[]>([])
 
   const [fen, setFen] = useState(testFen ?? "3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1");
-  
+
   const [scrollToBottom, setScrollToBottom] = useState(true);
   const handleChangeScroll = () => {
     setScrollToBottom(!scrollToBottom);
@@ -45,14 +45,16 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
   }, []);
 
   useEffect(() => {
-    if (window.Worker && thread.onmessage === null) {
+    if (window.Worker) {
       thread.onmessage = (e: MessageEvent<string>) => {
         const response = JSON.parse(e.data) as unknown as TProblem;
         // console.log({ response });
         setFen(response.fen)
         if (response.firstMove) {
-            setChessPositions(arr => (arr.length > 1 && scrollToBottom) 
-              ? [...arr.slice(1, arr.length), response] 
+          setChessPositions(arr => arr.length > 30 
+            ? [response] 
+            : arr.length > 4 && scrollToBottom
+              ? [...arr.slice(1, arr.length), response]
               : [...arr, response]);
         }
       };
@@ -73,7 +75,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
   // console.log('rendering...')
   return (
     <div className="fragment">
-      <div style={{display: 'flex', justifyContent: 'center'}}>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Chessboard width={150} position={fen} />
       </div>
       <br />

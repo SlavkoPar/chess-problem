@@ -172,7 +172,10 @@ self.onmessage = (e: MessageEvent<string>) => {
             if (!position.includes(square) && !((type === 'p' && (square.includes('8') || square.includes('1'))))) {
                 const piecePlaced = chessPosition.put({ type, color }, square);
                 const invalidPos = chessPosition.isCheck() ||
-                    (blackKing && chessPosition.isAttacked(square, 'w')) ||
+                    (blackKing && 
+                        (chessPosition.isAttacked(square, 'w') || 
+                        square.endsWith('1') || square.endsWith('8') || 
+                        square.startsWith('a') || square.startsWith('h'))) ||
                     (color === 'b' && chessPosition.isAttacked(position[0], 'b')); // white 'K' is at position[0]
                 if (invalidPos) {
                     const z = chessPosition.remove(square);
