@@ -23,8 +23,8 @@ const App: React.FC = () => {
 
   const [chess] = useState<ChessInstance>(
     //new Chess("8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1")
-    //new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
-    new Chess("3Q4/8/8/1k2N3/4K3/2R5/8/8 w - - 0 1")
+    new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
+    //new Chess("3Q4/8/8/1k2N3/4K3/2R5/8/8 w - - 0 1")
     );
  
   return (
