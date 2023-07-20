@@ -27,7 +27,8 @@ const App: React.FC = () => {
 
   const [chess] = useState<ChessInstance>(
     //new Chess("8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1")
-    new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
+    // new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
+    new Chess("8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1")
   );
 
   return (
@@ -35,7 +36,7 @@ const App: React.FC = () => {
       <Chessboard width={200} position={chess.fen()} />
       <br />
       <div className="board-fragments">
-        <BoardFragment fromSquare='a8' nSquares={8} />
+        <BoardFragment lookingForFen={chess.fen()} fromSquare='a8' nSquares={8} />
         {/* <BoardFragment fromSquare='a6' rows={2} nSquares={8} /> */}
         {/* <BoardFragment fromSquare='a4' rows={4} nSquares={8} /> */}
         {/* <BoardFragment fromSquare='a5' nSquares={5} /> */}

@@ -34,8 +34,6 @@ const cols: Record<string, string> = {
     'e': 'h'
 }
 
-
-
 const position: string[] = [];
 
 self.onmessage = (e: MessageEvent<string>) => {

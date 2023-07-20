@@ -6,10 +6,11 @@ import { FindProblem, TProblem } from "./App";
 interface IProps {
   fromSquare: string,
   nSquares: number;
+  lookingForFen: string;
   testFen?: string;
 }
 
-const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IProps) => {
+const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, testFen }: IProps) => {
 
   const thread: Worker = useMemo(() =>
     new Worker(new URL('./Thread.ts', import.meta.url)), []
@@ -20,7 +21,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
   const [problemsFound, setProblemsFound] = useState<string[]>([])
   localStorage.setItem('PROBLEMS-FOUND', JSON.stringify(problemsFound))
   
-  const [fen, setFen] = useState(testFen ?? "3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1");
+  const [fen, setFen] = useState(testFen ? testFen : lookingForFen);
 
   const [scrollToBottom, setScrollToBottom] = useState(true);
   const handleChangeScroll = () => {
@@ -30,11 +31,30 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+
+    const getPieces = (fen: string) : string[] => {
+      const pieces: string[] = [];
+      // "8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1"
+      const s = fen.split(' ')[0];
+      for (const p of ['K', 'Q', 'R', 'B', 'N', 'P']) {
+        for (const c of s) {
+          if (c === p) pieces.push(p) 
+        }
+      }
+      for (const p of ['k', 'q', 'r', 'b', 'n', 'p']) {
+        for (const c of s) {
+          if (c === p) pieces.push(p) 
+        }
+      }
+    
+      return pieces;
+    } 
+
     if (window.Worker) {
       const request = {
         action: testFen ? actions.testFen : actions.findProblem,
         // pieces: ['K', 'Q', 'R', 'N', 'k'],
-        pieces: ['K', 'Q', 'N', 'P', 'k', 'n', 'p'],
+        pieces: getPieces(lookingForFen),
         // put white king at the start
         // put black pices behind all the white pieces
         // put black king as the first of black pieces 
