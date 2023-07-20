@@ -292,7 +292,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                                 let firstMove = checkmateIn2();
                                 const isCheckmate = firstMove !== null;
                                 if (isCheckmate) {
-                                    if (firstMove === lastCheckmate) {
+                                    if (firstMove === lastCheckmate || firstMove!.endsWith('=Q') || firstMove!.endsWith('=R')) {
                                         firstMove = null;
                                     }
                                     else {
