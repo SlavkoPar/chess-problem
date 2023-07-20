@@ -3,7 +3,7 @@
 import { FindProblem, TProblem } from "./App";
 import { actions } from "./enums";
 
-const { Chess, bishop } = require("chess.js");
+const { Chess } = require("chess.js");
 
 const Board = [
     ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'],
@@ -203,7 +203,8 @@ self.onmessage = (e: MessageEvent<string>) => {
                 chessPosition.move(black);
                 // white 2
                 const white2Moves = chessPosition.moves();
-                const whiteMates = white2Moves.filter((m: string) => regexCheckmate.test(m));
+                const whiteMates = white2Moves.filter((m: string) => regexCheckmate.test(m) && 
+                         !(m.includes('=Q') || m.includes('=R')));
                 nMates2 = whiteMates.length;
                 if (nMates2 > 0 && nPatterns > 0) {
                     for (const white2 of whiteMates) {
@@ -292,7 +293,8 @@ self.onmessage = (e: MessageEvent<string>) => {
                                 let firstMove = checkmateIn2();
                                 const isCheckmate = firstMove !== null;
                                 if (isCheckmate) {
-                                    if (firstMove === lastCheckmate || firstMove!.endsWith('=Q') || firstMove!.endsWith('=R')) {
+                                    if (firstMove === lastCheckmate || 
+                                        firstMove!.endsWith('=Q') || firstMove!.endsWith('=R')) {
                                         firstMove = null;
                                     }
                                     else {

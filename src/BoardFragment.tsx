@@ -16,7 +16,10 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
   );
 
   const [chessPositions, setChessPositions] = useState<TProblem[]>([])
-
+  
+  const [problemsFound, setProblemsFound] = useState<string[]>([])
+  localStorage.setItem('PROBLEMS-FOUND', JSON.stringify(problemsFound))
+  
   const [fen, setFen] = useState(testFen ?? "3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1");
 
   const [scrollToBottom, setScrollToBottom] = useState(true);
@@ -52,6 +55,7 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
         // console.log({ response });
         setFen(response.fen)
         if (response.firstMove) {
+          setProblemsFound(arr => [...arr, e.data]);
           setChessPositions(arr => arr.length > 30 
             ? [response] 
             : arr.length > 4 && scrollToBottom
@@ -85,7 +89,10 @@ const BoardFragment: React.FC<IProps> = ({ fromSquare, nSquares, testFen }: IPro
         <input type="checkbox" id="checkbox" checked={scrollToBottom} onChange={handleChangeScroll} />
       </label>
       <br />
-      <button type="button" onClick={() => { setChessPositions([]) }} >Clear Problems found</button>
+      <button type="button" onClick={() => { 
+        localStorage.setItem('PROBLEMS-FOUND', JSON.stringify(problemsFound))
+        setChessPositions([]) 
+      }}>Clear Problems found</button>
       <br />
       <div className="problems" ref={bottomRef}>
         {chessPositions.map((problem, i) =>

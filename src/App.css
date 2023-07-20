@@ -78,3 +78,7 @@ body {
   border: 1px solid silver;
   width: 90%;
 }
+
+li {
+  margin: 3px;
+}
