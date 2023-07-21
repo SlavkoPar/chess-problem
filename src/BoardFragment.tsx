@@ -17,10 +17,10 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, 
   );
 
   const [chessPositions, setChessPositions] = useState<TProblem[]>([])
-  
+
   const [problemsFound, setProblemsFound] = useState<string[]>([])
   localStorage.setItem('PROBLEMS-FOUND', JSON.stringify(problemsFound))
-  
+
   const [fen, setFen] = useState(testFen ? testFen : lookingForFen);
 
   const [scrollToBottom, setScrollToBottom] = useState(true);
@@ -32,33 +32,43 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, 
 
   useEffect(() => {
 
-    const getPieces = (fen: string) : string[] => {
+    const getPieces = (fen: string): { pieces:string[], whiteSquareBishops: boolean[]} => {
       const pieces: string[] = [];
-      // "8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1"
+      const whiteSquareBishops: boolean[] = [];
       const s = fen.split(' ')[0];
       for (const p of ['K', 'Q', 'R', 'B', 'N', 'P']) {
         for (const c of s) {
-          if (c === p) pieces.push(p) 
+          if (c === p) {
+            pieces.push(p);
+            const bishopDraggedOnWhiteSquare = true;
+            whiteSquareBishops.push(p === 'B' ? bishopDraggedOnWhiteSquare : false)
+          }
         }
       }
       for (const p of ['k', 'q', 'r', 'b', 'n', 'p']) {
         for (const c of s) {
-          if (c === p) pieces.push(p) 
+          if (c === p) {
+            pieces.push(p);
+            const bishopDraggedOnWhiteSquare = false;
+            whiteSquareBishops.push(p === 'b' ? bishopDraggedOnWhiteSquare : false)
+          }
         }
       }
-    
-      return pieces;
-    } 
+
+      return { pieces, whiteSquareBishops };
+    }
 
     if (window.Worker) {
+      const { pieces, whiteSquareBishops } = getPieces(lookingForFen);
       const request = {
         action: testFen ? actions.testFen : actions.findProblem,
         // pieces: ['K', 'Q', 'R', 'N', 'k'],
-        pieces: getPieces(lookingForFen),
+        pieces,
+        whiteSquareBishops,
         // put white king at the start
         // put black pices behind all the white pieces
         // put black king as the first of black pieces 
-        // put the pieces in the order KQR[BN]P
+        // put the pieces in the order KQRBNP
         fromSquare,
         nSquares,
         testFen
@@ -76,8 +86,8 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, 
         setFen(response.fen)
         if (response.firstMove) {
           setProblemsFound(arr => [...arr, e.data]);
-          setChessPositions(arr => arr.length > 30 
-            ? [response] 
+          setChessPositions(arr => arr.length > 30
+            ? [response]
             : arr.length > 4 && scrollToBottom
               ? [...arr.slice(1, arr.length), response]
               : [...arr, response]);
@@ -109,9 +119,9 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, 
         <input type="checkbox" id="checkbox" checked={scrollToBottom} onChange={handleChangeScroll} />
       </label>
       <br />
-      <button type="button" onClick={() => { 
+      <button type="button" onClick={() => {
         localStorage.setItem('PROBLEMS-FOUND', JSON.stringify(problemsFound))
-        setChessPositions([]) 
+        setChessPositions([])
       }}>Clear Problems found</button>
       <br />
       <div className="problems" ref={bottomRef}>
