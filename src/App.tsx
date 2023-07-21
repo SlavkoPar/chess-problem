@@ -75,7 +75,10 @@ const App: React.FC = () => {
           <li>
             Ignore positions with 2 or more empty lines (rows or columns) between white and black pieces
           </li>
-          <li>Ignore checkmate with promotion of a white pawn to Queen or Rook, move with: (=Q or =R)</li>
+          <li>
+            Ignore positions with no white pieces inside of black pieces square
+          </li>
+          <li>Ignore checkmates with promotion of a white pawn to Queen or Rook, move with: (=Q or =R)</li>
           <li>
             When white has Queen and Night, prefer the final pictures like these:
             <ul>

@@ -46,6 +46,28 @@ export const twoEmptyLines = (pieces: string[]): boolean => { // ['b1', 'd4', 'e
     return false;
 }
 
+export const anyWhitePieceInsideOfBlackPiecesSquare = (position: string[], blackKingIndex: number): boolean => {
+    let iMinB = 9; let iMaxB = -1; 
+    let jMinB = 9; let jMaxB = -1;
+    for (let i = blackKingIndex; i < position.length; i++) {
+        const square = position[i];
+        const ii = parseInt(square.charAt(1));
+        const jj = columns.indexOf(square.charAt(0));
+        if (ii < iMinB) iMinB = ii;
+        if (ii > iMaxB) iMaxB = ii;
+        if (jj < jMinB) jMinB = jj;
+        if (jj > jMaxB) jMaxB = jj;
+    }
+    for (let i = 0; i < blackKingIndex; i++) {
+        const square = position[i];
+        const ii = parseInt(square.charAt(1));
+        const jj = columns.indexOf(square.charAt(0));
+        if (ii >= iMinB && ii <= iMaxB && jj >= jMinB && jj <= jMaxB) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // between white pieces and black king
 export const twoEmptyLinesWhitesBlacks = (whitePieces: string[], blackPieces: string[]): boolean => {

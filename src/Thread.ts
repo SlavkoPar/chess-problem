@@ -1,7 +1,7 @@
 
 /* eslint-disable no-restricted-globals */
 import { FindProblem, TProblem } from "./App";
-import { Board, columns, twoEmptyLines, twoEmptyLinesWhitesBlacks, isOnDiagonal, applyNightFirewall } from './helpers'
+import { Board, anyWhitePieceInsideOfBlackPiecesSquare, twoEmptyLines, twoEmptyLinesWhitesBlacks, applyNightFirewall } from './helpers'
 const { Chess } = require("chess.js");
 
 const regexCheck = new RegExp('[#+]$');
@@ -42,8 +42,8 @@ self.onmessage = (e: MessageEvent<string>) => {
         board.push(...Board[j + i].slice(ind, ind2));
     }
 
-      
-    const isPattern = (board: [({ type: string, color: string, square: string }|null)[]]): boolean => {
+
+    const isPattern = (board: [({ type: string, color: string, square: string } | null)[]]): boolean => {
         // 1.Pattern: Queen Night firewall
         if (applyQueenNightFirewall) {
             if (applyNightFirewall(board, 'q'))
@@ -55,6 +55,8 @@ self.onmessage = (e: MessageEvent<string>) => {
         }
         return false;
     }
+
+    const blackKingIndex = findProblem.pieces.indexOf('k');
 
     const checkmateIn2 = (): string | null => {
         const whiteMoves1 = chessPosition.moves().filter((m: string) => !regexCheck.test(m) && !m.includes('x'));
@@ -72,8 +74,8 @@ self.onmessage = (e: MessageEvent<string>) => {
                 chessPosition.move(black);
                 // white 2
                 const white2Moves = chessPosition.moves();
-                const whiteMates = white2Moves.filter((m: string) => regexCheckmate.test(m) && 
-                         !(m.includes('=Q') || m.includes('=R')));
+                const whiteMates = white2Moves.filter((m: string) => regexCheckmate.test(m) &&
+                    !(m.includes('=Q') || m.includes('=R')));
                 nMates2 = whiteMates.length;
                 if (nMates2 > 0 && nPatterns > 0) {
                     for (const white2 of whiteMates) {
@@ -106,7 +108,6 @@ self.onmessage = (e: MessageEvent<string>) => {
         return nMates1 === 1 ? firstMove : null;
     }
 
-    const blackKingIndex = findProblem.pieces.indexOf('k');
     let lastCheckmate: string | null = null;
 
     function getPosition(pieces: string[], index: number): void {
@@ -125,13 +126,13 @@ self.onmessage = (e: MessageEvent<string>) => {
                 const invalidPos = chessPosition.isCheck() ||
                     (blackKing &&
                         (chessPosition.isAttacked(square, 'w') ||
-                        square.endsWith('1') || square.endsWith('8') ||
-                        square.startsWith('a') || square.startsWith('h') ||
-                        (pieceColor === 'b' && chessPosition.isAttacked(position[0], 'b')))
-                    ) || 
-                    (isBishop && 
-                        ((whiteSquareBishop && chessPosition.squareColor(square)==='dark') ||
-                        (!whiteSquareBishop && chessPosition.squareColor(square)==='light'))
+                            square.endsWith('1') || square.endsWith('8') ||
+                            square.startsWith('a') || square.startsWith('h') ||
+                            (pieceColor === 'b' && chessPosition.isAttacked(position[0], 'b')))
+                    ) ||
+                    (isBishop &&
+                        ((whiteSquareBishop && chessPosition.squareColor(square) === 'dark') ||
+                            (!whiteSquareBishop && chessPosition.squareColor(square) === 'light'))
                     );
                 if (invalidPos) {
                     const z = chessPosition.remove(square);
@@ -166,26 +167,28 @@ self.onmessage = (e: MessageEvent<string>) => {
                         }
                         if (!whiteEmptyLines && !blackEmptyLines && !whiteHasCheck) {
                             if (pieces.length === 0) {
-                                const fen = chessPosition.fen()
-                                let firstMove = checkmateIn2();
-                                const isCheckmate = firstMove !== null;
-                                if (isCheckmate) {
-                                    if (firstMove === lastCheckmate || 
-                                        firstMove!.endsWith('=Q') || firstMove!.endsWith('=R')) {
-                                        firstMove = null;
+                                if (anyWhitePieceInsideOfBlackPiecesSquare(position, blackKingIndex)) {
+                                    const fen = chessPosition.fen();
+                                    let firstMove = checkmateIn2();
+                                    const isCheckmate = firstMove !== null;
+                                    if (isCheckmate) {
+                                        if (firstMove === lastCheckmate ||
+                                            firstMove!.endsWith('=Q') || firstMove!.endsWith('=R')) {
+                                            firstMove = null;
+                                        }
+                                        else {
+                                            lastCheckmate = firstMove;
+                                            console.log('------', position, '---', fen);
+                                        }
                                     }
-                                    else {
-                                        lastCheckmate = firstMove;
-                                        console.log('------', position, '---', fen);
-                                    }
+                                    const response = { fen, firstMove } as TProblem;
+                                    self.postMessage(JSON.stringify(response));
+                                    //if (isCheckmate) {
+                                    // if white move (Qf7) is checkmate, 
+                                    // then ignore every problem, after all black pieces moves (except king), 
+                                    // that produces checkmate (Qf7)
+                                    //}
                                 }
-                                const response = { fen, firstMove } as TProblem;
-                                self.postMessage(JSON.stringify(response));
-                                //if (isCheckmate) {
-                                // if white move (Qf7) is checkmate, 
-                                // then ignore every problem, after all black pieces moves (except king), 
-                                // that produces checkmate (Qf7)
-                                //}
                             }
                             else {
                                 getPosition([...pieces], index + 1);
