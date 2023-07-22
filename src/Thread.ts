@@ -1,7 +1,7 @@
 
 /* eslint-disable no-restricted-globals */
 import { FindProblem, TProblem } from "./App";
-import { Board, anyWhitePieceInsideOfBlackPiecesSquare, twoEmptyLines, twoEmptyLinesWhitesBlacks, applyNightFirewall } from './helpers'
+import { Board, anyWhitePieceInsideOfBlackPiecesSquare, twoEmptyLines, twoEmptyLinesWhitesBlacks, applyNightFirewall, columns } from './helpers'
 const { Chess } = require("chess.js");
 
 const regexCheck = new RegExp('[#+]$');
@@ -108,6 +108,9 @@ self.onmessage = (e: MessageEvent<string>) => {
         return nMates1 === 1 ? firstMove : null;
     }
 
+    const whitePieces: {i: number, j: number}[] =  [];
+    const blackPieces: {i: number, j: number}[] =  [];
+
     let lastCheckmate: string | null = null;
 
     function getPosition(pieces: string[], index: number): void {
@@ -144,8 +147,16 @@ self.onmessage = (e: MessageEvent<string>) => {
                         let whiteHasCheck = false;
                         if (blackKing) {
                             lastCheckmate = null;
+                            calcWhitePiecesSquare(whitePieces);
                         }
                         position.push(square);
+                        if (index < blackKingIndex) {
+                            whitePieces.push({i: parseInt(square.charAt(1)), j: columns.indexOf(square.charAt(0)) })
+                        }
+                        else {
+                            blackPieces.push({i: parseInt(square.charAt(1)), j: columns.indexOf(square.charAt(0)) })
+                        }
+
                         //if (color === 'w' && position.length > 1) {
                         if (index > 0 && index < blackKingIndex) {
                             const whitePieces = position.slice(0, position.length); // TODO keep blackPieces at recursion level
@@ -195,6 +206,12 @@ self.onmessage = (e: MessageEvent<string>) => {
                             }
                         }
                         position.pop();
+                        if (index < blackKingIndex) {
+                            whitePieces.pop()
+                        }
+                        else {
+                            blackPieces.pop()
+                        }
                         const z = chessPosition.remove(square);
                         // const fen2 = chessPosition.fen();
                     }
@@ -222,3 +239,7 @@ self.onmessage = (e: MessageEvent<string>) => {
 };
 
 export { };
+    function calcWhitePiecesSquare(whitePieces: { i: number; j: number; }[]) {
+        throw new Error("Function not implemented.");
+    }
+

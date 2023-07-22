@@ -69,6 +69,20 @@ export const anyWhitePieceInsideOfBlackPiecesSquare = (position: string[], black
     return false;
 }
 
+let iMinW = 9; let iMaxW = -1; 
+let jMinW = 9; let jMaxW = -1;
+export const calcWhitePiecesSquare = (whitePieces: {i: number, j: number}[]): void => {
+    for (let square of whitePieces) {
+        const { i, j } = square;
+        if (i < iMinW) iMinW = i;
+        if (i > iMaxW) iMaxW = i;
+        if (j < jMinW) jMinW = j;
+        if (j > jMaxW) jMaxW = j;
+    }
+}
+
+
+
 // between white pieces and black king
 export const twoEmptyLinesWhitesBlacks = (whitePieces: string[], blackPieces: string[]): boolean => {
     const whiteMaxI = Math.max(...whitePieces.map(square => parseInt(square.charAt(1))));
