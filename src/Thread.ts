@@ -181,6 +181,8 @@ self.onmessage = (e: MessageEvent<string>) => {
                         }
                         if (!whiteEmptyLines && !blackEmptyLines && !whiteHasCheck) {
                             if (pieces.length === 0) {
+                                    const fffen = chessPosition.fen();
+                                    console.log(fffen)
                                 if (anyWhitePieceInsideOfBlackPiecesSquare(blackPieces)) {
                                     const fen = chessPosition.fen();
                                     let firstMove = checkmateIn2();

@@ -27,24 +27,6 @@ const cols: Record<string, string> = {
 
 export const columns = "abcdefgh";
 
-// inside of white or black pieces
-export const twoEmptyLinesWAS = (pieces: string[]): boolean => { // ['b1', 'd4', 'e4', 'h5']
-    const a = pieces.map(square => square.charAt(1)).sort();
-    for (let i = 0; i < a.length - 1; i++) {
-        if (!['6', '7', '8'].includes(a[i])) {
-            if (rows[a[i]].includes(a[i + 1]))
-                return true;
-        }
-    }
-    const b = pieces.map(square => square.charAt(0)).sort();
-    for (let i = 0; i < b.length - 1; i++) {
-        if (!['f', 'g', 'h'].includes(b[i])) {
-            if (cols[b[i]].includes(b[i + 1]))
-                return true;
-        }
-    }
-    return false;
-}
 
 export const twoEmptyLines = (pieces: {i: number, j: number}[]): boolean => { 
     let a = pieces.map(square => square.i).sort();
@@ -63,32 +45,11 @@ export const twoEmptyLines = (pieces: {i: number, j: number}[]): boolean => {
 }
 
 
-export const anyWhitePieceInsideOfBlackPiecesSquareWAS = (position: string[], blackKingIndex: number): boolean => {
-    let iMinB = 9; let iMaxB = -1; 
-    let jMinB = 9; let jMaxB = -1;
-    for (let i = blackKingIndex; i < position.length; i++) {
-        const square = position[i];
-        const ii = parseInt(square.charAt(1));
-        const jj = columns.indexOf(square.charAt(0));
-        if (ii < iMinB) iMinB = ii;
-        if (ii > iMaxB) iMaxB = ii;
-        if (jj < jMinB) jMinB = jj;
-        if (jj > jMaxB) jMaxB = jj;
-    }
-    for (let i = 0; i < blackKingIndex; i++) {
-        const square = position[i];
-        const ii = parseInt(square.charAt(1));
-        const jj = columns.indexOf(square.charAt(0));
-        if (ii >= iMinB && ii <= iMaxB && jj >= jMinB && jj <= jMaxB) {
-            return true;
-        }
-    }
-    return false;
-}
-
 let iMinW = 9; let iMaxW = -1; 
 let jMinW = 9; let jMaxW = -1;
 export const calcWhitePiecesSquare = (whitePieces: {i: number, j: number}[]): void => {
+    iMinW = 9; iMaxW = -1; 
+    jMinW = 9; jMaxW = -1;
     for (let square of whitePieces) {
         const { i, j } = square;
         if (i < iMinW) iMinW = i;
