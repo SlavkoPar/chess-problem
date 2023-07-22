@@ -28,7 +28,7 @@ const cols: Record<string, string> = {
 export const columns = "abcdefgh";
 
 // inside of white or black pieces
-export const twoEmptyLines = (pieces: string[]): boolean => { // ['b1', 'd4', 'e4', 'h5']
+export const twoEmptyLinesWAS = (pieces: string[]): boolean => { // ['b1', 'd4', 'e4', 'h5']
     const a = pieces.map(square => square.charAt(1)).sort();
     for (let i = 0; i < a.length - 1; i++) {
         if (!['6', '7', '8'].includes(a[i])) {
@@ -46,7 +46,24 @@ export const twoEmptyLines = (pieces: string[]): boolean => { // ['b1', 'd4', 'e
     return false;
 }
 
-export const anyWhitePieceInsideOfBlackPiecesSquare = (position: string[], blackKingIndex: number): boolean => {
+export const twoEmptyLines = (pieces: {i: number, j: number}[]): boolean => { 
+    let a = pieces.map(square => square.i).sort();
+    for (let x = 0; x < a.length - 1; x++) {
+        if (a[x+1]-a[x] > 1) {
+            return true;
+        }
+    }
+    a = pieces.map(square => square.j).sort();
+    for (let x = 0; x < a.length - 1; x++) {
+        if (a[x+1]-a[x] > 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+export const anyWhitePieceInsideOfBlackPiecesSquareWAS = (position: string[], blackKingIndex: number): boolean => {
     let iMinB = 9; let iMaxB = -1; 
     let jMinB = 9; let jMaxB = -1;
     for (let i = blackKingIndex; i < position.length; i++) {
@@ -81,16 +98,24 @@ export const calcWhitePiecesSquare = (whitePieces: {i: number, j: number}[]): vo
     }
 }
 
-
+export const anyWhitePieceInsideOfBlackPiecesSquare = (blackPieces: {i:number, j:number}[]): boolean => {
+    for (const square of blackPieces) {
+        const { i, j } = square;
+        if (i >= iMinW && i <= iMaxW && j >= jMinW && j <= jMaxW) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // between white pieces and black king
-export const twoEmptyLinesWhitesBlacks = (whitePieces: string[], blackPieces: string[]): boolean => {
-    const whiteMaxI = Math.max(...whitePieces.map(square => parseInt(square.charAt(1))));
-    const blackMinI = Math.min(...blackPieces.map(square => parseInt(square.charAt(1))));
+export const twoEmptyLinesWhitesBlacks = (whitePieces: {i: number, j: number}[], blackPieces: {i: number, j: number}[]): boolean => {
+    const whiteMaxI = Math.max(...whitePieces.map(square => square.i));
+    const blackMinI = Math.min(...blackPieces.map(square => square.i));
     if (Math.abs(whiteMaxI - blackMinI) > 1)
         return true;
-    const whiteMaxJ = Math.max(...whitePieces.map(square => columns.indexOf(square.charAt(0))));
-    const blackMinJ = Math.min(...blackPieces.map(square => columns.indexOf(square.charAt(0))));
+    const whiteMaxJ = Math.max(...whitePieces.map(square => square.j));
+    const blackMinJ = Math.min(...blackPieces.map(square => square.j));
     if (Math.abs(whiteMaxJ - blackMinJ) > 1)
         return true;
     return false;

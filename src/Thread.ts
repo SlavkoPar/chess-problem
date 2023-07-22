@@ -1,7 +1,13 @@
 
 /* eslint-disable no-restricted-globals */
 import { FindProblem, TProblem } from "./App";
-import { Board, anyWhitePieceInsideOfBlackPiecesSquare, twoEmptyLines, twoEmptyLinesWhitesBlacks, applyNightFirewall, columns } from './helpers'
+import { Board, 
+    calcWhitePiecesSquare,
+    anyWhitePieceInsideOfBlackPiecesSquare,
+    twoEmptyLines,
+    twoEmptyLinesWhitesBlacks,
+    applyNightFirewall,
+    columns } from './helpers'
 const { Chess } = require("chess.js");
 
 const regexCheck = new RegExp('[#+]$');
@@ -108,8 +114,8 @@ self.onmessage = (e: MessageEvent<string>) => {
         return nMates1 === 1 ? firstMove : null;
     }
 
-    const whitePieces: {i: number, j: number}[] =  [];
-    const blackPieces: {i: number, j: number}[] =  [];
+    const whitePieces: {i: number, j: number}[] = [];
+    const blackPieces: {i: number, j: number}[] = [];
 
     let lastCheckmate: string | null = null;
 
@@ -159,16 +165,13 @@ self.onmessage = (e: MessageEvent<string>) => {
 
                         //if (color === 'w' && position.length > 1) {
                         if (index > 0 && index < blackKingIndex) {
-                            const whitePieces = position.slice(0, position.length); // TODO keep blackPieces at recursion level
                             whiteEmptyLines = twoEmptyLines(whitePieces);
                         }
                         else if (index >= blackKingIndex) {
-                            const blackPieces = position.slice(blackKingIndex, position.length); // TODO keep blackPieces at recursion level
                             if (blackPieces.length > 1) {
                                 blackEmptyLines = twoEmptyLines(blackPieces);
                             }
                             if (!blackEmptyLines) {
-                                const whitePieces = position.slice(0, blackKingIndex);
                                 blackEmptyLines = twoEmptyLinesWhitesBlacks(whitePieces, blackPieces);
                             }
                             if (index === blackKingIndex) {
@@ -178,7 +181,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                         }
                         if (!whiteEmptyLines && !blackEmptyLines && !whiteHasCheck) {
                             if (pieces.length === 0) {
-                                if (anyWhitePieceInsideOfBlackPiecesSquare(position, blackKingIndex)) {
+                                if (anyWhitePieceInsideOfBlackPiecesSquare(blackPieces)) {
                                     const fen = chessPosition.fen();
                                     let firstMove = checkmateIn2();
                                     const isCheckmate = firstMove !== null;
@@ -239,7 +242,3 @@ self.onmessage = (e: MessageEvent<string>) => {
 };
 
 export { };
-    function calcWhitePiecesSquare(whitePieces: { i: number; j: number; }[]) {
-        throw new Error("Function not implemented.");
-    }
-
