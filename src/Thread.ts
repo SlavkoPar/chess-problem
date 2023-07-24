@@ -1,13 +1,16 @@
 
 /* eslint-disable no-restricted-globals */
 import { FindProblem, TProblem } from "./App";
-import { Board, 
+import {
+    Board,
+    getBishopsColors,
     calcWhitePiecesSquare,
     anyWhitePieceInsideOfBlackPiecesSquare,
     twoEmptyLines,
     twoEmptyLinesWhitesBlacks,
     applyNightFirewall,
-    columns } from './helpers'
+    columns
+} from './helpers'
 const { Chess } = require("chess.js");
 
 const regexCheck = new RegExp('[#+]$');
@@ -17,11 +20,42 @@ const position: string[] = [];
 
 self.onmessage = (e: MessageEvent<string>) => {
     const findProblem = JSON.parse(e.data) as FindProblem;
-    const { pieces, whiteSquareBishops, fromSquare, nSquares, testFen } = findProblem;
+    const { pieces, lookingForFen, fromSquare, nSquares, testFen } = findProblem;
+    const whiteSquareBishops: boolean[] = [];
 
-    const chessPosition = testFen ? new Chess(testFen) : new Chess();
-    if (!testFen)
+    const chessPosition = testFen ? new Chess(testFen) : new Chess(lookingForFen);
+    if (!testFen) {
+        // findProblem.lookingForFen => whiteSquareBishops
+        const board = chessPosition.board();
+        const taken: boolean[][] = [];
+        for (let i = 0; i < 8; i++) {
+            taken[i] = [];
+            for (let j = 0; j < 8; j++) 
+                taken[i][j] = false; 
+        }    
+
+        for (const piece of pieces) {
+            const pieceColor = ['K', 'Q', 'R', 'B', 'N', 'P'].includes(piece) ? 'w' : 'b';
+            const pieceType = piece.toLowerCase();
+            let found = false;
+            for (let i = 0; i < 8 && !found; i++) {
+                const row = board[i];
+                for (let j = 0; j < 8 && !found; j++) {
+                    const p = row[j];
+                    if (p) {
+                        const { type, color, square } = p!;
+                        if (type === pieceType && color === pieceColor) {
+                            const isWhiteSquare = type === 'b' && !taken[i][j] && chessPosition.squareColor(square) === 'light';
+                            taken[i][j] = true;
+                            whiteSquareBishops.push(isWhiteSquare);
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }
         chessPosition.clear();
+    }
 
     // patterns
     let nPatterns = 0
@@ -114,8 +148,8 @@ self.onmessage = (e: MessageEvent<string>) => {
         return nMates1 === 1 ? firstMove : null;
     }
 
-    const whitePieces: {i: number, j: number}[] = [];
-    const blackPieces: {i: number, j: number}[] = [];
+    const whitePieces: { i: number, j: number }[] = [];
+    const blackPieces: { i: number, j: number }[] = [];
 
     let lastCheckmate: string | null = null;
 
@@ -157,10 +191,10 @@ self.onmessage = (e: MessageEvent<string>) => {
                         }
                         position.push(square);
                         if (index < blackKingIndex) {
-                            whitePieces.push({i: parseInt(square.charAt(1)), j: columns.indexOf(square.charAt(0)) })
+                            whitePieces.push({ i: parseInt(square.charAt(1)), j: columns.indexOf(square.charAt(0)) })
                         }
                         else {
-                            blackPieces.push({i: parseInt(square.charAt(1)), j: columns.indexOf(square.charAt(0)) })
+                            blackPieces.push({ i: parseInt(square.charAt(1)), j: columns.indexOf(square.charAt(0)) })
                         }
 
                         //if (color === 'w' && position.length > 1) {
@@ -181,8 +215,8 @@ self.onmessage = (e: MessageEvent<string>) => {
                         }
                         if (!whiteEmptyLines && !blackEmptyLines && !whiteHasCheck) {
                             if (pieces.length === 0) {
-                                    const fffen = chessPosition.fen();
-                                    console.log(fffen)
+                                const fffen = chessPosition.fen();
+                                console.log(fffen)
                                 if (anyWhitePieceInsideOfBlackPiecesSquare(blackPieces)) {
                                     const fen = chessPosition.fen();
                                     let firstMove = checkmateIn2();

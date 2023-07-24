@@ -131,7 +131,6 @@ for (const row of ['1', '2', '3', '4', '5', '6', '7', '8']) {
 }
 export const isOnDiagonal = (square1: string, square2: string): boolean => diagonal[square1].includes(square2);
 
-
 export const applyNightFirewall = (board: [({ type: string, color: string, square: string } | null)[]], queenOrBishop: string): boolean => {
     // 1.Pattern: Queen Night firewall
     let squareQ = null;
@@ -165,5 +164,29 @@ export const applyNightFirewall = (board: [({ type: string, color: string, squar
     return bRet;
 }
 
+// whiteSquareBishops  
+export const getBishopsColors = (pieces: string[], board: [({ type: string, color: string, square: string } | null)[]]): boolean[] => {
+
+    for (const p of ['K', 'Q', 'R', 'B', 'N', 'P']) {
+        for (const c of []) {
+          if (c === p) {
+            pieces.push(p);
+            //const bishopDraggedOnWhiteSquare = true;
+            //whiteSquareBishops.push(p === 'B' ? bishopDraggedOnWhiteSquare : false)
+          }
+        }
+      }
+    for (let i = 0; i < 8; i++) {
+        const row = board[i];
+        for (let j = 0; j < 8; j++) {
+            if (row[j]) {
+                const { type, color, square } = row[j]!;
+                if (type === 'b' && color === 'w') {
+                }
+            }
+        }
+    }
+    return [];
+}
 
 export { };

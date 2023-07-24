@@ -18,7 +18,7 @@ export type TProblem = {
 export type FindProblem = {
   action: string;
   pieces: string[];
-  whiteSquareBishops: boolean[],
+  lookingForFen: string;
   fromSquare: string;
   nSquares: number;
   testFen: string | undefined;
@@ -28,8 +28,10 @@ const App: React.FC = () => {
 
   const [chess] = useState<ChessInstance>(
     //new Chess("8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1")
-    new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
+    // new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
     //new Chess("8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1")
+    new Chess("3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1")
+    
   );
 
   return (
@@ -38,7 +40,7 @@ const App: React.FC = () => {
       <br />
       <div className="board-fragments">
         <BoardFragment lookingForFen={chess.fen()} fromSquare='a8' nSquares={8} /> 
-        {/* testFen="8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1" */}
+        {/* testFen="3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1"  */}
         {/* <BoardFragment fromSquare='a6' rows={2} nSquares={8} /> */}
         {/* <BoardFragment fromSquare='a4' rows={4} nSquares={8} /> */}
         {/* <BoardFragment fromSquare='a5' nSquares={5} /> */}
@@ -82,13 +84,13 @@ const App: React.FC = () => {
           <li>
             When white has Queen and Night, prefer the final pictures like these:
             <ul>
-              <li>Q and N at the same line, 1 line between<br />
+              <li>(Q or Bishop) and N at the same line, 1 line between<br />
                 <img width="180" height="180" src={QN3} alt="QN"></img>
               </li>
-              <li>Q and N at the same line, 3 lines between<br />
+              <li>(Q or Bishop) and N at the same line, 3 lines between<br />
                 <img width="180" height="180" src={QN1} alt="QN"></img>
               </li>
-              <li>Q and N at the same diagonal<br />
+              <li>(Q or Bishop) and N at the same diagonal<br />
                 <img width="180" height="180" src={QN2} alt="QN"></img>
               </li>
             </ul>

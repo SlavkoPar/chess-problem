@@ -32,16 +32,13 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, 
 
   useEffect(() => {
 
-    const getPieces = (fen: string): { pieces:string[], whiteSquareBishops: boolean[]} => {
+    const getPieces = (fen: string): { pieces:string[] } => {
       const pieces: string[] = [];
-      const whiteSquareBishops: boolean[] = [];
       const s = fen.split(' ')[0];
       for (const p of ['K', 'Q', 'R', 'B', 'N', 'P']) {
         for (const c of s) {
           if (c === p) {
             pieces.push(p);
-            const bishopDraggedOnWhiteSquare = true;
-            whiteSquareBishops.push(p === 'B' ? bishopDraggedOnWhiteSquare : false)
           }
         }
       }
@@ -49,22 +46,22 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, 
         for (const c of s) {
           if (c === p) {
             pieces.push(p);
-            const bishopDraggedOnWhiteSquare = false;
-            whiteSquareBishops.push(p === 'b' ? bishopDraggedOnWhiteSquare : false)
+            //const bishopDraggedOnWhiteSquare = false;
+            //whiteSquareBishops.push(p === 'b' ? bishopDraggedOnWhiteSquare : false)
           }
         }
       }
 
-      return { pieces, whiteSquareBishops };
+      return { pieces };
     }
 
     if (window.Worker) {
-      const { pieces, whiteSquareBishops } = getPieces(lookingForFen);
+      const { pieces } = getPieces(lookingForFen);
       const request = {
         action: testFen ? actions.testFen : actions.findProblem,
         // pieces: ['K', 'Q', 'R', 'N', 'k'],
         pieces,
-        whiteSquareBishops,
+        lookingForFen,
         // put white king at the start
         // put black pices behind all the white pieces
         // put black king as the first of black pieces 
