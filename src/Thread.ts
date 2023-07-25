@@ -60,18 +60,16 @@ self.onmessage = (e: MessageEvent<string>) => {
 
     const kingBoard: string[] = [];
     let radi = false;
-    for (const row of Board) {
-        for (const square of row) {
-            if (square === fromSquare) {
-                radi = true;
-            }
-            else if (square === toSquare) {
-                kingBoard.push(square);
-                radi = false;
-            }
-            if (radi)
-                kingBoard.push(square);
+    for (const square of board) {
+        if (square === fromSquare) {
+            radi = true;
         }
+        else if (square === toSquare) {
+            kingBoard.push(square);
+            radi = false;
+        }
+        if (radi)
+            kingBoard.push(square);
     }
 
 
@@ -155,7 +153,7 @@ self.onmessage = (e: MessageEvent<string>) => {
         const isBishop = type === 'b';
         const whiteSquareBishop = isBishop && whiteSquareBishops[index];
         // console.log(piece)
-        for (const square of whiteKing?kingBoard:board) {
+        for (const square of (whiteKing ? kingBoard : board)) {
             if (!position.includes(square) && !((type === 'p' && (square.includes('8') || square.includes('1'))))) {
                 const piecePlaced = chessPosition.put({ type, color: pieceColor }, square);
                 // white 'K' is at position[0]
@@ -208,8 +206,6 @@ self.onmessage = (e: MessageEvent<string>) => {
                         }
                         if (!whiteEmptyLines && !blackEmptyLines && !whiteHasCheck) {
                             if (pieces.length === 0) {
-                                const fffen = chessPosition.fen();
-                                console.log(fffen)
                                 if (anyWhitePieceInsideOfBlackPiecesSquare(blackPieces)) {
                                     const fen = chessPosition.fen();
                                     let firstMove = checkmateIn2();
