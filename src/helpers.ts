@@ -28,16 +28,16 @@ const cols: Record<string, string> = {
 export const columns = "abcdefgh";
 
 
-export const twoEmptyLines = (pieces: {i: number, j: number}[]): boolean => { 
+export const twoEmptyLines = (pieces: { i: number, j: number }[]): boolean => {
     let a = pieces.map(square => square.i).sort();
     for (let x = 0; x < a.length - 1; x++) {
-        if (a[x+1]-a[x] > 1) {
+        if (a[x + 1] - a[x] > 1) {
             return true;
         }
     }
     a = pieces.map(square => square.j).sort();
     for (let x = 0; x < a.length - 1; x++) {
-        if (a[x+1]-a[x] > 1) {
+        if (a[x + 1] - a[x] > 1) {
             return true;
         }
     }
@@ -45,10 +45,10 @@ export const twoEmptyLines = (pieces: {i: number, j: number}[]): boolean => {
 }
 
 
-let iMinW = 9; let iMaxW = -1; 
+let iMinW = 9; let iMaxW = -1;
 let jMinW = 9; let jMaxW = -1;
-export const calcWhitePiecesSquare = (whitePieces: {i: number, j: number}[]): void => {
-    iMinW = 9; iMaxW = -1; 
+export const calcWhitePiecesSquare = (whitePieces: { i: number, j: number }[]): void => {
+    iMinW = 9; iMaxW = -1;
     jMinW = 9; jMaxW = -1;
     for (let square of whitePieces) {
         const { i, j } = square;
@@ -59,7 +59,7 @@ export const calcWhitePiecesSquare = (whitePieces: {i: number, j: number}[]): vo
     }
 }
 
-export const anyWhitePieceInsideOfBlackPiecesSquare = (blackPieces: {i:number, j:number}[]): boolean => {
+export const anyWhitePieceInsideOfBlackPiecesSquare = (blackPieces: { i: number, j: number }[]): boolean => {
     for (const square of blackPieces) {
         const { i, j } = square;
         if (i >= iMinW && i <= iMaxW && j >= jMinW && j <= jMaxW) {
@@ -70,7 +70,7 @@ export const anyWhitePieceInsideOfBlackPiecesSquare = (blackPieces: {i:number, j
 }
 
 // between white pieces and black king
-export const twoEmptyLinesWhitesBlacks = (whitePieces: {i: number, j: number}[], blackPieces: {i: number, j: number}[]): boolean => {
+export const twoEmptyLinesWhitesBlacks = (whitePieces: { i: number, j: number }[], blackPieces: { i: number, j: number }[]): boolean => {
     const whiteMaxI = Math.max(...whitePieces.map(square => square.i));
     const blackMinI = Math.min(...blackPieces.map(square => square.i));
     if (Math.abs(whiteMaxI - blackMinI) > 1)
@@ -164,29 +164,42 @@ export const applyNightFirewall = (board: [({ type: string, color: string, squar
     return bRet;
 }
 
-// whiteSquareBishops  
-export const getBishopsColors = (pieces: string[], board: [({ type: string, color: string, square: string } | null)[]]): boolean[] => {
+export const markWhiteSquareBishops = (
+    pieces: string[], 
+    board: [({ type: string, color: string, square: string } | null)[]],
+    squareColor: (square: string) => string
+) => {
+    const whiteSquareBishops: boolean[] = [];
 
-    for (const p of ['K', 'Q', 'R', 'B', 'N', 'P']) {
-        for (const c of []) {
-          if (c === p) {
-            pieces.push(p);
-            //const bishopDraggedOnWhiteSquare = true;
-            //whiteSquareBishops.push(p === 'B' ? bishopDraggedOnWhiteSquare : false)
-          }
-        }
-      }
+    const taken: boolean[][] = [];
     for (let i = 0; i < 8; i++) {
-        const row = board[i];
-        for (let j = 0; j < 8; j++) {
-            if (row[j]) {
-                const { type, color, square } = row[j]!;
-                if (type === 'b' && color === 'w') {
+        taken[i] = [];
+        for (let j = 0; j < 8; j++)
+            taken[i][j] = false;
+    }
+
+    for (const piece of pieces) {
+        const pieceColor = ['K', 'Q', 'R', 'B', 'N', 'P'].includes(piece) ? 'w' : 'b';
+        const pieceType = piece.toLowerCase();
+        let found = false;
+        for (let i = 0; i < 8 && !found; i++) {
+            const row = board[i];
+            for (let j = 0; j < 8 && !found; j++) {
+                const p = row[j];
+                if (p) {
+                    const { type, color, square } = p!;
+                    if (type === pieceType && color === pieceColor) {
+                        const isWhiteSquare = type === 'b' && !taken[i][j] && squareColor(square) === 'light';
+                        taken[i][j] = true;
+                        whiteSquareBishops.push(isWhiteSquare);
+                        found = true;
+                    }
                 }
             }
         }
     }
-    return [];
+
+    return whiteSquareBishops;
 }
 
 export { };

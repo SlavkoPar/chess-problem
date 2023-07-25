@@ -20,6 +20,7 @@ export type FindProblem = {
   pieces: string[];
   lookingForFen: string;
   fromSquare: string;
+  toSquare: string;
   nSquares: number;
   testFen: string | undefined;
 };
@@ -31,7 +32,6 @@ const App: React.FC = () => {
     // new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
     //new Chess("8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1")
     new Chess("3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1")
-    
   );
 
   return (
@@ -39,7 +39,9 @@ const App: React.FC = () => {
       <Chessboard width={200} position={chess.fen()} />
       <br />
       <div className="board-fragments">
-        <BoardFragment lookingForFen={chess.fen()} fromSquare='a8' nSquares={8} /> 
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a8" toSquare="h7" nSquares={8} /> 
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a6" toSquare="h5" nSquares={8} /> 
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a4" toSquare="h1" nSquares={8} /> 
         {/* testFen="3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1"  */}
         {/* <BoardFragment fromSquare='a6' rows={2} nSquares={8} /> */}
         {/* <BoardFragment fromSquare='a4' rows={4} nSquares={8} /> */}

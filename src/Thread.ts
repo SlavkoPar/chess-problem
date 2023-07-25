@@ -3,7 +3,7 @@
 import { FindProblem, TProblem } from "./App";
 import {
     Board,
-    getBishopsColors,
+    markWhiteSquareBishops,
     calcWhitePiecesSquare,
     anyWhitePieceInsideOfBlackPiecesSquare,
     twoEmptyLines,
@@ -20,40 +20,16 @@ const position: string[] = [];
 
 self.onmessage = (e: MessageEvent<string>) => {
     const findProblem = JSON.parse(e.data) as FindProblem;
-    const { pieces, lookingForFen, fromSquare, nSquares, testFen } = findProblem;
+    const { pieces, lookingForFen, fromSquare, toSquare, nSquares, testFen } = findProblem;
     const whiteSquareBishops: boolean[] = [];
 
     const chessPosition = testFen ? new Chess(testFen) : new Chess(lookingForFen);
     if (!testFen) {
-        // findProblem.lookingForFen => whiteSquareBishops
-        const board = chessPosition.board();
-        const taken: boolean[][] = [];
-        for (let i = 0; i < 8; i++) {
-            taken[i] = [];
-            for (let j = 0; j < 8; j++) 
-                taken[i][j] = false; 
-        }    
 
-        for (const piece of pieces) {
-            const pieceColor = ['K', 'Q', 'R', 'B', 'N', 'P'].includes(piece) ? 'w' : 'b';
-            const pieceType = piece.toLowerCase();
-            let found = false;
-            for (let i = 0; i < 8 && !found; i++) {
-                const row = board[i];
-                for (let j = 0; j < 8 && !found; j++) {
-                    const p = row[j];
-                    if (p) {
-                        const { type, color, square } = p!;
-                        if (type === pieceType && color === pieceColor) {
-                            const isWhiteSquare = type === 'b' && !taken[i][j] && chessPosition.squareColor(square) === 'light';
-                            taken[i][j] = true;
-                            whiteSquareBishops.push(isWhiteSquare);
-                            found = true;
-                        }
-                    }
-                }
-            }
-        }
+        const board = chessPosition.board();
+        const whiteBishops = markWhiteSquareBishops(pieces, board, (square: string) => chessPosition.squareColor(square));
+        whiteSquareBishops.push(...whiteBishops);
+
         chessPosition.clear();
     }
 
@@ -80,6 +56,22 @@ self.onmessage = (e: MessageEvent<string>) => {
     const board: string[] = [];
     for (let i = 0; i < nSquares - j; i++) {
         board.push(...Board[j + i].slice(ind, ind2));
+    }
+
+    const kingBoard: string[] = [];
+    let radi = false;
+    for (const row of Board) {
+        for (const square of row) {
+            if (square === fromSquare) {
+                radi = true;
+            }
+            else if (square === toSquare) {
+                kingBoard.push(square);
+                radi = false;
+            }
+            if (radi)
+                kingBoard.push(square);
+        }
     }
 
 
@@ -158,11 +150,12 @@ self.onmessage = (e: MessageEvent<string>) => {
         const c = piece!.charAt(0);
         const type = c.toLowerCase();
         const pieceColor = /[RNBKQP]/.test(c) ? 'w' : 'b';
+        const whiteKing = c === 'K';
         const blackKing = c === 'k';
         const isBishop = type === 'b';
         const whiteSquareBishop = isBishop && whiteSquareBishops[index];
         // console.log(piece)
-        for (const square of board) {
+        for (const square of whiteKing?kingBoard:board) {
             if (!position.includes(square) && !((type === 'p' && (square.includes('8') || square.includes('1'))))) {
                 const piecePlaced = chessPosition.put({ type, color: pieceColor }, square);
                 // white 'K' is at position[0]

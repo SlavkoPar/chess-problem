@@ -5,21 +5,24 @@ import { FindProblem, TProblem } from "./App";
 
 interface IProps {
   fromSquare: string,
+  toSquare: string,
   nSquares: number;
   lookingForFen: string;
   testFen?: string;
 }
 
-const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, testFen }: IProps) => {
+const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, nSquares, testFen }: IProps) => {
 
   const thread: Worker = useMemo(() =>
     new Worker(new URL('./Thread.ts', import.meta.url)), []
   );
 
+  const PROBLEMS = `${fromSquare}-PROBLEMS`;
+
   const [chessPositions, setChessPositions] = useState<TProblem[]>([])
 
   const [problemsFound, setProblemsFound] = useState<string[]>([])
-  localStorage.setItem('PROBLEMS-FOUND', JSON.stringify(problemsFound))
+  localStorage.setItem(PROBLEMS, JSON.stringify(problemsFound))
 
   const [fen, setFen] = useState(testFen ? testFen : lookingForFen);
 
@@ -67,6 +70,7 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, 
         // put black king as the first of black pieces 
         // put the pieces in the order KQRBNP
         fromSquare,
+        toSquare,
         nSquares,
         testFen
       } as FindProblem;
@@ -117,7 +121,7 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, nSquares, 
       </label>
       <br />
       <button type="button" onClick={() => {
-        localStorage.setItem('PROBLEMS-FOUND', JSON.stringify(problemsFound))
+        localStorage.setItem(PROBLEMS, JSON.stringify(problemsFound))
         setChessPositions([])
       }}>Clear Problems found</button>
       <br />
