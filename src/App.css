@@ -49,14 +49,14 @@ body {
   height: 80vh;
   overflow-y: auto;
   flex-wrap: wrap;
-  border: 1px solid blue;
 }
 
 .board-fragments {
   display: flex;
   flex-direction: row;
   margin-bottom: 5px;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
 }
 
 .fragment {
@@ -81,4 +81,16 @@ body {
 
 li {
   margin: 3px;
+}
+
+button {
+  border-radius: 3px;
+  margin: 5px;
+}
+
+.problem-looking-for {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid red;
 }

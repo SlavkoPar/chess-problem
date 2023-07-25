@@ -29,19 +29,21 @@ const App: React.FC = () => {
 
   const [chess] = useState<ChessInstance>(
     //new Chess("8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1")
-    new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
+    // new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
     //new Chess("8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1")
-    //new Chess("3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1")
+    new Chess("3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1")
   );
 
   return (
     <>
-      <Chessboard width={200} position={chess.fen()} />
+      <div className="problem-looking-for">
+        <Chessboard width={200} position={chess.fen()} />
+      </div>
       <br />
       <div className="board-fragments">
-        <BoardFragment lookingForFen={chess.fen()} fromSquare="a8" toSquare="h7" nSquares={8} /> 
-        <BoardFragment lookingForFen={chess.fen()} fromSquare="a6" toSquare="h5" nSquares={8} /> 
-        <BoardFragment lookingForFen={chess.fen()} fromSquare="a4" toSquare="h1" nSquares={8} /> 
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a8" toSquare="h7" nSquares={8} />
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a6" toSquare="h5" nSquares={8} />
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a4" toSquare="h1" nSquares={8} />
         {/* testFen="3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1"  */}
         {/* <BoardFragment fromSquare='a6' rows={2} nSquares={8} /> */}
         {/* <BoardFragment fromSquare='a4' rows={4} nSquares={8} /> */}
@@ -66,9 +68,9 @@ const App: React.FC = () => {
             Ignore the positions where white has no check at the first move
           </li>
           <li>
-              When white move (i.e. Qf7) is checkmate, <br/>
-              then ignore problems, after all black pieces moves (except the king), <br/>
-              that produce the same checkmate (Qf7)<br/>
+            When white move (i.e. Qf7) is checkmate, <br />
+            then ignore problems, after all black pieces moves (except the king), <br />
+            that produce the same checkmate (Qf7)<br />
           </li>
           <li>
             Ignore positions with 2 or more empty lines (rows or columns) between white pieces
