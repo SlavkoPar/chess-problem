@@ -47,7 +47,7 @@ self.onmessage = (e: MessageEvent<string>) => {
     let j = 0;
     //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     for (; j < Board.length; j++) {
-        ind = Board[j].indexOf(fromSquare);
+        ind = Board[j].indexOf('a8');
         if (ind !== -1) {
             break;
         }
@@ -74,11 +74,12 @@ self.onmessage = (e: MessageEvent<string>) => {
 
 
     const isPattern = (board: [({ type: string, color: string, square: string } | null)[]]): boolean => {
-        // 1.Pattern: Queen Night firewall
+        // 1. Pattern: Queen Night firewall
         if (applyQueenNightFirewall) {
             if (applyNightFirewall(board, 'q'))
                 return true;
         }
+        // 2. Pattern: Bishop Night firewall
         if (applyBishopNightFirewall) {
             if (applyNightFirewall(board, 'b'))
                 return true;
@@ -153,7 +154,8 @@ self.onmessage = (e: MessageEvent<string>) => {
         const isBishop = type === 'b';
         const whiteSquareBishop = isBishop && whiteSquareBishops[index];
         // console.log(piece)
-        for (const square of (whiteKing ? kingBoard : board)) {
+        const boardMy = whiteKing ? kingBoard : board;
+        for (const square of boardMy) {
             if (!position.includes(square) && !((type === 'p' && (square.includes('8') || square.includes('1'))))) {
                 const piecePlaced = chessPosition.put({ type, color: pieceColor }, square);
                 // white 'K' is at position[0]
