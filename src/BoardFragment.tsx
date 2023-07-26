@@ -81,10 +81,13 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
 
   useEffect(() => {
     if (window.Worker) {
+      let n = 0;
       thread.onmessage = (e: MessageEvent<string>) => {
         const response = JSON.parse(e.data) as unknown as TProblem;
         // console.log({ response });
-        setFen(response.fen)
+        if (++n % 20 === 0) {
+          setFen(response.fen);
+        }
         if (response.firstMove) {
           setProblemsFound(arr => [...arr, e.data]);
           setChessPositions(arr => arr.length > 10
@@ -111,7 +114,7 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
   // console.log('rendering...')
   return (
     <div className="fragment">
-      <h4>Problems, white king {`${fromSquare}-${toSquare}`}</h4>
+      <h4>Thread, white king {`${fromSquare}-${toSquare}`}</h4>
 
       <div style={{ display: 'flex', justifyContent: 'center', margin: '5px' }}>
         <Chessboard width={150} position={fen} />
@@ -120,11 +123,11 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
         Scroll to the bottom
         <input type="checkbox" id="checkbox" checked={scrollToBottom} onChange={handleChangeScroll} />
       </label>
+      <h4>Problems</h4>
       <button type="button" onClick={() => {
         localStorage.setItem(PROBLEMS, JSON.stringify(problemsFound))
         setChessPositions([])
       }}>Clear</button>
-      <br />
       <div className="problems" ref={bottomRef}>
         {chessPositions.map((problem, i) =>
           <div key={i} className="row">

@@ -6,7 +6,7 @@ import {
     markWhiteSquareBishops,
     calcWhitePiecesSquare,
     anyWhitePieceInsideOfBlackPiecesSquare,
-    twoEmptyLines,
+    emptyLines,
     twoEmptyLinesWhitesBlacks,
     applyNightFirewall,
     columns
@@ -43,11 +43,12 @@ self.onmessage = (e: MessageEvent<string>) => {
     if (applyBishopNightFirewall)
         nPatterns++;
 
+    /*
     let ind = 0;
     let j = 0;
     //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     for (; j < Board.length; j++) {
-        ind = Board[j].indexOf('a8');
+        ind = Board[j].indexOf(fromSquare);
         if (ind !== -1) {
             break;
         }
@@ -56,6 +57,11 @@ self.onmessage = (e: MessageEvent<string>) => {
     const board: string[] = [];
     for (let i = 0; i < nSquares - j; i++) {
         board.push(...Board[j + i].slice(ind, ind2));
+    }
+    */
+    const board: string[] = [];
+    for (const row of Board) {
+        board.push(...row);
     }
 
     const kingBoard: string[] = [];
@@ -192,11 +198,11 @@ self.onmessage = (e: MessageEvent<string>) => {
 
                         //if (color === 'w' && position.length > 1) {
                         if (index > 0 && index < blackKingIndex) {
-                            whiteEmptyLines = twoEmptyLines(whitePieces);
+                            whiteEmptyLines = emptyLines(whitePieces);
                         }
                         else if (index >= blackKingIndex) {
                             if (blackPieces.length > 1) {
-                                blackEmptyLines = twoEmptyLines(blackPieces);
+                                blackEmptyLines = emptyLines(blackPieces);
                             }
                             if (!blackEmptyLines) {
                                 blackEmptyLines = twoEmptyLinesWhitesBlacks(whitePieces, blackPieces);

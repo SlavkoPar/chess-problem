@@ -28,16 +28,16 @@ const cols: Record<string, string> = {
 export const columns = "abcdefgh";
 
 
-export const twoEmptyLines = (pieces: { i: number, j: number }[]): boolean => {
+export const emptyLines = (pieces: { i: number, j: number }[]): boolean => {
     let a = pieces.map(square => square.i).sort();
     for (let x = 0; x < a.length - 1; x++) {
-        if (a[x + 1] - a[x] > 1) {
+        if (a[x + 1] - a[x] > 3) {
             return true;
         }
     }
     a = pieces.map(square => square.j).sort();
     for (let x = 0; x < a.length - 1; x++) {
-        if (a[x + 1] - a[x] > 1) {
+        if (a[x + 1] - a[x] > 3) {
             return true;
         }
     }
@@ -70,7 +70,10 @@ export const anyWhitePieceInsideOfBlackPiecesSquare = (blackPieces: { i: number,
 }
 
 // between white pieces and black king
-export const twoEmptyLinesWhitesBlacks = (whitePieces: { i: number, j: number }[], blackPieces: { i: number, j: number }[]): boolean => {
+export const twoEmptyLinesWhitesBlacks = (
+    whitePieces: { i: number, j: number }[], 
+    blackPieces: { i: number, j: number }[])
+: boolean => {
     const whiteMaxI = Math.max(...whitePieces.map(square => square.i));
     const blackMinI = Math.min(...blackPieces.map(square => square.i));
     if (Math.abs(whiteMaxI - blackMinI) > 1)
