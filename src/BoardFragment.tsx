@@ -35,7 +35,7 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
 
   useEffect(() => {
 
-    const getPieces = (fen: string): { pieces:string[] } => {
+    const getPieces = (fen: string): { pieces: string[] } => {
       const pieces: string[] = [];
       const s = fen.split(' ')[0];
       for (const p of ['K', 'Q', 'R', 'B', 'N', 'P']) {
@@ -111,16 +111,15 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
   // console.log('rendering...')
   return (
     <div className="fragment">
+      <h4>Problems, white king {`${fromSquare}-${toSquare}`}</h4>
+
       <div style={{ display: 'flex', justifyContent: 'center', margin: '5px' }}>
         <Chessboard width={150} position={fen} />
       </div>
-      <br />
       <label htmlFor="checkbox">
         Scroll to the bottom
         <input type="checkbox" id="checkbox" checked={scrollToBottom} onChange={handleChangeScroll} />
       </label>
-      <br />
-      <h4>Problems, white king {`${fromSquare}-${toSquare}`}</h4>
       <button type="button" onClick={() => {
         localStorage.setItem(PROBLEMS, JSON.stringify(problemsFound))
         setChessPositions([])

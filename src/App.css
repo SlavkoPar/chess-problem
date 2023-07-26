@@ -84,6 +84,7 @@ li {
 }
 
 button {
+  border: 1px solid silver;
   border-radius: 3px;
   margin: 5px;
 }
@@ -92,5 +93,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid red;
+}
+
+h4 {
+  margin: 5px;
 }
