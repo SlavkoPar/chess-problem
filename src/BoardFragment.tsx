@@ -85,9 +85,9 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
       thread.onmessage = (e: MessageEvent<string>) => {
         const response = JSON.parse(e.data) as unknown as TProblem;
         // console.log({ response });
-        if (++n % 20 === 0) {
+        //if (++n % 20 === 0) {
           setFen(response.fen);
-        }
+        //}
         if (response.firstMove) {
           setProblemsFound(arr => [...arr, e.data]);
           setChessPositions(arr => arr.length > 10
