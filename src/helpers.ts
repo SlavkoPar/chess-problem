@@ -9,24 +9,7 @@ export const Board = [
     ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1']
 ]
 
-const rows: Record<string, string> = {
-    '1': '45678',
-    '2': '5678',
-    '3': '678',
-    '4': '78',
-    '5': '8'
-}
-
-const cols: Record<string, string> = {
-    'a': 'defgh',
-    'b': 'efgh',
-    'c': 'fgh',
-    'd': 'gh',
-    'e': 'h'
-}
-
 export const columns = "abcdefgh";
-
 
 export const emptyLines = (pieces: { i: number, j: number }[]): boolean => {
     let a = pieces.map(square => square.i).sort();
@@ -71,9 +54,8 @@ export const anyWhitePieceInsideOfBlackPiecesSquare = (blackPieces: { i: number,
 
 // between white pieces and black king
 export const twoEmptyLinesWhitesBlacks = (
-    whitePieces: { i: number, j: number }[], 
-    blackPieces: { i: number, j: number }[])
-: boolean => {
+    whitePieces: { i: number, j: number }[],
+    blackPieces: { i: number, j: number }[]) : boolean => {
     const whiteMaxI = Math.max(...whitePieces.map(square => square.i));
     const blackMinI = Math.min(...blackPieces.map(square => square.i));
     if (Math.abs(whiteMaxI - blackMinI) > 1)
@@ -168,7 +150,7 @@ export const applyNightFirewall = (board: [({ type: string, color: string, squar
 }
 
 export const markWhiteSquareBishops = (
-    pieces: string[], 
+    pieces: string[],
     board: [({ type: string, color: string, square: string } | null)[]],
     squareColor: (square: string) => string
 ) => {
@@ -203,6 +185,30 @@ export const markWhiteSquareBishops = (
     }
 
     return whiteSquareBishops;
+}
+
+const arroundWhiteKing: Record<string, string[]> = {};
+
+const arrounds = (i: number, j: number): string[] => {
+    let arr: string[] = []
+    for (let r=i-1; r <= i+1; r++) {
+        if (r<1 || r>8) continue;
+        for (let c=j-1; c <= j+1; c++) {
+            if (c<0 || r>7 || (r===i && c===j)) continue;
+            arr.push(columns[c] + r);
+        }
+    }
+    return arr;
+}
+
+for (let i=1; i <= 8; i++) {
+    for (let j=0; j < 8; j++) {
+        arroundWhiteKing[columns[j] + i] = arrounds(i, j);
+    }
+}
+
+export const touchingWhiteKing = (whiteKingSquare: string, blackPieceSquare: string): boolean => {
+    return arroundWhiteKing[whiteKingSquare].includes(blackPieceSquare);
 }
 
 export { };

@@ -9,7 +9,8 @@ import {
     emptyLines,
     twoEmptyLinesWhitesBlacks,
     applyNightFirewall,
-    columns
+    columns,
+    touchingWhiteKing
 } from './helpers'
 const { Chess } = require("chess.js");
 
@@ -165,7 +166,30 @@ self.onmessage = (e: MessageEvent<string>) => {
             if (!position.includes(square) && !((type === 'p' && (square.includes('8') || square.includes('1'))))) {
                 const piecePlaced = chess.put({ type, color: pieceColor }, square);
                 // white 'K' is at position[0]
-                const invalidPos = chess.isCheck() ||
+                let invalidPos = false;
+                if ((isBishop && ((whiteSquareBishop && chess.squareColor(square) === 'dark') ||
+                    (!whiteSquareBishop && chess.squareColor(square) === 'light')))
+                ) {
+                    invalidPos = true;
+                }
+                if (!invalidPos && pieceColor === 'b') {
+                    if (blackKing) {
+                        if (touchingWhiteKing(position[0], square)) {
+                            invalidPos = true;
+                        }
+                        else {
+                            if (chess.isAttacked(square, 'w'))
+                                invalidPos = true;
+                        }
+                    }
+                    else if (chess.isCheck()) {
+                        invalidPos = true;
+                        if (['q', 'r', 'b'].includes(type) && !touchingWhiteKing(position[0], square)) {
+                            invalidPos = false;
+                        }
+                    }
+                }
+                /*invalidPos = chess.isCheck() ||
                     (blackKing &&
                         (chess.isAttacked(square, 'w') ||
                             // square.endsWith('1') || square.endsWith('8') ||
@@ -174,8 +198,9 @@ self.onmessage = (e: MessageEvent<string>) => {
                     ) ||
                     (isBishop &&
                         ((whiteSquareBishop && chess.squareColor(square) === 'dark') ||
-                            (!whiteSquareBishop && chess.squareColor(square) === 'light'))
+                        (!whiteSquareBishop && chess.squareColor(square) === 'light'))
                     );
+                */
                 if (invalidPos) {
                     const z = chess.remove(square);
                 }

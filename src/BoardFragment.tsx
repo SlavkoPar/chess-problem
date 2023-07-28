@@ -45,12 +45,10 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
           }
         }
       }
-      for (const p of ['k', 'q', 'r', 'b', 'n', 'p']) {
+      for (const p of ['q', 'r', 'b', 'n', 'p', 'k']) { // black king at the end
         for (const c of s) {
           if (c === p) {
             pieces.push(p);
-            //const bishopDraggedOnWhiteSquare = false;
-            //whiteSquareBishops.push(p === 'b' ? bishopDraggedOnWhiteSquare : false)
           }
         }
       }
@@ -85,9 +83,9 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
       thread.onmessage = (e: MessageEvent<string>) => {
         const response = JSON.parse(e.data) as unknown as TProblem;
         // console.log({ response });
-        //if (++n % 20 === 0) {
+        if (++n % 10 === 0) {
           setFen(response.fen);
-        //}
+        }
         if (response.firstMove) {
           setProblemsFound(arr => [...arr, e.data]);
           setChessPositions(arr => arr.length > 10
