@@ -35,7 +35,7 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
 
   useEffect(() => {
 
-    const getPieces = (fen: string): { pieces: string[] } => {
+    const getPieces = (fen: string): { pieces: string[], indexOfBlack: number } => {
       const pieces: string[] = [];
       const s = fen.split(' ')[0];
       for (const p of ['K', 'Q', 'R', 'B', 'N', 'P']) {
@@ -45,6 +45,7 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
           }
         }
       }
+      const indexOfBlack =  pieces.length -1;
       for (const p of ['q', 'r', 'b', 'n', 'p', 'k']) { // black king at the end
         for (const c of s) {
           if (c === p) {
@@ -53,15 +54,16 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
         }
       }
 
-      return { pieces };
+      return { pieces, indexOfBlack };
     }
 
     if (window.Worker) {
-      const { pieces } = getPieces(lookingForFen);
+      const { pieces, indexOfBlack } = getPieces(lookingForFen);
       const request = {
         action: testFen ? actions.testFen : actions.findProblem,
         // pieces: ['K', 'Q', 'R', 'N', 'k'],
         pieces,
+        indexOfBlack, 
         lookingForFen,
         // put white king at the start
         // put black pices behind all the white pieces

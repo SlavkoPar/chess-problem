@@ -19,6 +19,7 @@ export type TProblem = {
 export type FindProblem = {
   action: string;
   pieces: string[];
+  indexOfBlack: number,
   lookingForFen: string;
   fromSquare: string;
   toSquare: string;
