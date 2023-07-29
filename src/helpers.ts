@@ -149,6 +149,26 @@ export const applyNightFirewall = (board: [({ type: string, color: string, squar
     return bRet;
 }
 
+export const applyRookKingPattern = (
+                board: [({ type: string, color: string, square: string } | null)[]], 
+                whiteKing: { i: number, j: number },
+                king: { i: number, j: number }): boolean => {
+    // 3. Pattern: Rook King
+    for (let i = 0; i < 8; i++) {
+        const row = board[i];
+        for (let j = 0; j < 8; j++) {
+            if (row[j]) {
+                const { type, color, square } = row[j]!;
+                if (type === 'r' && color === 'w') {
+                    const r = i+1;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
 export const markWhiteSquareBishops = (
     pieces: string[],
     board: [({ type: string, color: string, square: string } | null)[]],

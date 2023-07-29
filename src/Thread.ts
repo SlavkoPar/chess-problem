@@ -7,10 +7,10 @@ import {
     calcWhitePiecesSquare,
     anyWhitePieceInsideOfBlackPiecesSquare,
     emptyLines,
-    twoEmptyLinesWhitesBlacks,
     applyNightFirewall,
     columns,
-    touchingWhiteKing
+    touchingWhiteKing,
+    applyRookKingPattern
 } from './helpers'
 const { Chess } = require("chess.js");
 
@@ -42,6 +42,10 @@ self.onmessage = (e: MessageEvent<string>) => {
 
     const applyBishopNightFirewall = pieces.includes('B') && pieces.includes('N');
     if (applyBishopNightFirewall)
+        nPatterns++;
+
+    const applyRookKing = pieces.includes('R');
+    if (applyRookKing)
         nPatterns++;
 
     /*
@@ -90,6 +94,25 @@ self.onmessage = (e: MessageEvent<string>) => {
         if (applyBishopNightFirewall) {
             if (applyNightFirewall(board, 'b'))
                 return true;
+        }
+        // 3. Pattern: Rook King pattern
+        if (applyRookKing) {
+            const whiteKing = whitePieces[0];
+            const blackKing = blackPieces[blackPieces.length-1];
+            if (whiteKing.i === blackKing.i && Math.abs(whiteKing.j - blackKing.j) === 2) {
+                for (let ind=0; ind < position.length; ind++) {
+                    if (position[ind] === 'R' && whitePieces[ind].j === blackKing.j) {
+                        return true;
+                    }
+                }
+            }
+            if (whiteKing.j === blackKing.j && Math.abs(whiteKing.i - blackKing.i) === 2) {
+                for (let ind=0; ind < position.length; ind++) {
+                    if (position[ind] === 'R' && whitePieces[ind].i === blackKing.i) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
