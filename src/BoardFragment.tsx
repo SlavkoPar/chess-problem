@@ -45,7 +45,7 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
           }
         }
       }
-      const indexOfBlack =  pieces.length -1;
+      const indexOfBlack =  pieces.length;
       for (const p of ['q', 'r', 'b', 'n', 'p', 'k']) { // black king at the end
         for (const c of s) {
           if (c === p) {

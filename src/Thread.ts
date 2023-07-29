@@ -159,7 +159,7 @@ self.onmessage = (e: MessageEvent<string>) => {
         const c = piece!.charAt(0);
         const type = c.toLowerCase();
         const pieceColor = /[RNBKQP]/.test(c) ? 'w' : 'b';
-        const isBlack =  index >= indexOfBlack; // pieceColor === 'b';
+        const isBlack = index >= indexOfBlack; // pieceColor === 'b';
         const whiteKing = c === 'K';
         const blackKing = c === 'k';
         const isBishop = type === 'b';
@@ -172,7 +172,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                 // white 'K' is at position[0]
                 let invalidPos = false;
                 if ((isBishop && ((whiteSquareBishop && chess.squareColor(square) === 'dark') ||
-                                 (!whiteSquareBishop && chess.squareColor(square) === 'light')))
+                    (!whiteSquareBishop && chess.squareColor(square) === 'light')))
                 ) {
                     invalidPos = true;
                 }
@@ -232,43 +232,49 @@ self.onmessage = (e: MessageEvent<string>) => {
                             // after all the white pieces have been placed
                             whiteEmptyLines = emptyLines(whitePieces);
                         }
-                        // else if (index >= indexOfBlack) {
-                        else if (blackKing) {
-                            if (blackPieces.length > 1) {
-                                // after all the white pieces have been placed
-                                blackEmptyLines = emptyLines(blackPieces);
-                            }
-                            //if (!blackEmptyLines) { // TODO bellow we ask for intersection of white and black pieces
-                            //    blackEmptyLines = twoEmptyLinesWhitesBlacks(whitePieces, blackPieces);
-                            //}
-                            // if (blackKing) {
-                            //     // TODO Implement this after the move: ignore if white has no check at the first move
-                            //     whiteHasCheck = chess.isAttacked(square, 'w')
+                        if (!whiteEmptyLines) {
+                            // else if (index >= indexOfBlack) {
+                            // else if (blackKing) {
+                            //     if (blackPieces.length > 1) {
+                            //         // after all the white pieces have been placed
+                            //         blackEmptyLines = emptyLines(blackPieces);
+                            //     }
+                            //     //if (!blackEmptyLines) { // TODO bellow we ask for intersection of white and black pieces
+                            //     //    blackEmptyLines = twoEmptyLinesWhitesBlacks(whitePieces, blackPieces);
+                            //     //}
+                            //     // if (blackKing) {
+                            //     //     // TODO Implement this after the move: ignore if white has no check at the first move
+                            //     //     whiteHasCheck = chess.isAttacked(square, 'w')
+                            //     // }
                             // }
-                        }
-                        if (!whiteEmptyLines && !blackEmptyLines) { //} && !whiteHasCheck) {
+                            //if (!whiteEmptyLines && !blackEmptyLines) { //} && !whiteHasCheck) {
+                            // do the job after all the pieces are placed
                             if (pieces.length === 0) {
-                                if (anyWhitePieceInsideOfBlackPiecesSquare(blackPieces)) {
-                                    const fen = chess.fen();
-                                    let firstMove = checkmateIn2();
-                                    const isCheckmate = firstMove !== null;
-                                    if (isCheckmate) {
-                                        if (firstMove === lastCheckmate ||
-                                            firstMove!.endsWith('=Q') || firstMove!.endsWith('=R')) {
-                                            firstMove = null;
+                                blackEmptyLines = emptyLines(blackPieces);
+                                if (!blackEmptyLines) {
+                                    const intersection = anyWhitePieceInsideOfBlackPiecesSquare(blackPieces);
+                                    if (intersection) {
+                                        const fen = chess.fen();
+                                        let firstMove = checkmateIn2();
+                                        const isCheckmate = firstMove !== null;
+                                        if (isCheckmate) {
+                                            if (firstMove === lastCheckmate ||
+                                                firstMove!.endsWith('=Q') || firstMove!.endsWith('=R')) {
+                                                firstMove = null;
+                                            }
+                                            else {
+                                                lastCheckmate = firstMove;
+                                                console.log('------', position, '---', fen);
+                                            }
                                         }
-                                        else {
-                                            lastCheckmate = firstMove;
-                                            console.log('------', position, '---', fen);
-                                        }
+                                        const response = { fen, firstMove } as TProblem;
+                                        self.postMessage(JSON.stringify(response));
+                                        //if (isCheckmate) {
+                                        // if white move (Qf7) is checkmate, 
+                                        // then ignore every problem, after all black pieces moves (except king), 
+                                        // that produces checkmate (Qf7)
+                                        //}
                                     }
-                                    const response = { fen, firstMove } as TProblem;
-                                    self.postMessage(JSON.stringify(response));
-                                    //if (isCheckmate) {
-                                    // if white move (Qf7) is checkmate, 
-                                    // then ignore every problem, after all black pieces moves (except king), 
-                                    // that produces checkmate (Qf7)
-                                    //}
                                 }
                             }
                             else {

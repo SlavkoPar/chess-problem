@@ -14,13 +14,13 @@ export const columns = "abcdefgh";
 export const emptyLines = (pieces: { i: number, j: number }[]): boolean => {
     let a = pieces.map(square => square.i).sort();
     for (let x = 0; x < a.length - 1; x++) {
-        if (a[x + 1] - a[x] > 5) {   // a3-a8 menas 3 empty lines
+        if (a[x + 1] - a[x] > 3) {   // a2-a7 means 3 empty lines
             return true;
         }
     }
     a = pieces.map(square => square.j).sort();
     for (let x = 0; x < a.length - 1; x++) {
-        if (a[x + 1] - a[x] > 5) {
+        if (a[x + 1] - a[x] > 3) {
             return true;
         }
     }
