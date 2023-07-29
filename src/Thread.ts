@@ -10,7 +10,7 @@ import {
     applyNightFirewall,
     columns,
     touchingWhiteKing,
-    applyRookKingPattern
+    applyRookKing
 } from './helpers'
 const { Chess } = require("chess.js");
 
@@ -35,7 +35,7 @@ self.onmessage = (e: MessageEvent<string>) => {
     }
 
     // patterns
-    let nPatterns = 0
+    let nPatterns = 0;
     const applyQueenNightFirewall = pieces.includes('Q') && pieces.includes('N');
     if (applyQueenNightFirewall)
         nPatterns++;
@@ -44,8 +44,8 @@ self.onmessage = (e: MessageEvent<string>) => {
     if (applyBishopNightFirewall)
         nPatterns++;
 
-    const applyRookKing = pieces.includes('R');
-    if (applyRookKing)
+    const applyRook = pieces.includes('R');
+    if (applyRook)
         nPatterns++;
 
     /*
@@ -96,23 +96,34 @@ self.onmessage = (e: MessageEvent<string>) => {
                 return true;
         }
         // 3. Pattern: Rook King pattern
-        if (applyRookKing) {
+        if (applyRook) {
+            if (applyRookKing(board))
+                return true;
+
+            /*
             const whiteKing = whitePieces[0];
-            const blackKing = blackPieces[blackPieces.length-1];
+            const blackKing = blackPieces[blackPieces.length - 1];
             if (whiteKing.i === blackKing.i && Math.abs(whiteKing.j - blackKing.j) === 2) {
-                for (let ind=0; ind < position.length; ind++) {
-                    if (position[ind] === 'R' && whitePieces[ind].j === blackKing.j) {
-                        return true;
+                for (let ind = 0; ind < pieces.length; ind++) {
+                    if (pieces[ind] === 'R') {
+                        const rook = whitePieces[ind]
+                        if (rook.j === blackKing.j) {
+                            return true;
+                        }
                     }
                 }
             }
             if (whiteKing.j === blackKing.j && Math.abs(whiteKing.i - blackKing.i) === 2) {
-                for (let ind=0; ind < position.length; ind++) {
-                    if (position[ind] === 'R' && whitePieces[ind].i === blackKing.i) {
-                        return true;
+                for (let ind = 0; ind < pieces.length; ind++) {
+                    if (pieces[ind] === 'R') {
+                        const rook = whitePieces[ind]
+                        if (rook.i === blackKing.i) {
+                            return true;
+                        }
                     }
                 }
             }
+            */
         }
         return false;
     }
@@ -147,7 +158,7 @@ self.onmessage = (e: MessageEvent<string>) => {
                         // is there any of checkmates a pattern?
                         if (isPattern(chess.board())) {
                             oneOfTheCheckmatesIsPattern = true;
-                            console.log('black:', black, ' white2:', white2)
+                            console.log('Pattern black:', white1, black, ' white2:', white2)
                         }
                         chess.undo();
                         if (oneOfTheCheckmatesIsPattern)

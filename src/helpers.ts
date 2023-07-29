@@ -55,7 +55,7 @@ export const anyWhitePieceInsideOfBlackPiecesSquare = (blackPieces: { i: number,
 // between white pieces and black king
 export const twoEmptyLinesWhitesBlacks = (
     whitePieces: { i: number, j: number }[],
-    blackPieces: { i: number, j: number }[]) : boolean => {
+    blackPieces: { i: number, j: number }[]): boolean => {
     const whiteMaxI = Math.max(...whitePieces.map(square => square.i));
     const blackMinI = Math.min(...blackPieces.map(square => square.i));
     if (Math.abs(whiteMaxI - blackMinI) > 1)
@@ -149,25 +149,55 @@ export const applyNightFirewall = (board: [({ type: string, color: string, squar
     return bRet;
 }
 
-export const applyRookKingPattern = (
-                board: [({ type: string, color: string, square: string } | null)[]], 
-                whiteKing: { i: number, j: number },
-                king: { i: number, j: number }): boolean => {
+
+export const applyRookKing = (board: [({ type: string, color: string, square: string } | null)[]]): boolean => {
     // 3. Pattern: Rook King
+    let whiteKingSquare = null;
+    let blackKingSquare = null;
+    const rooks: string[] = [];
     for (let i = 0; i < 8; i++) {
         const row = board[i];
-        for (let j = 0; j < 8; j++) {
+        for (let j = 0; j < 8 && (!whiteKingSquare || !blackKingSquare); j++) {
             if (row[j]) {
                 const { type, color, square } = row[j]!;
-                if (type === 'r' && color === 'w') {
-                    const r = i+1;
+                if (type === 'k') {
+                    if (color === 'w')
+                        whiteKingSquare = square;
+                    else
+                        blackKingSquare = square;
+                }
+                else if (type === 'r' && color === 'w') {
+                    rooks.push(square)
                 }
             }
         }
     }
+
+    const iWK = parseInt(whiteKingSquare!.charAt(1));
+    const jWK = columns.indexOf(whiteKingSquare!.charAt(0));
+
+    const iBK = parseInt(blackKingSquare!.charAt(1));
+    const jBK = columns.indexOf(blackKingSquare!.charAt(0));
+
+    if (iWK === iBK && Math.abs(jWK - jBK) === 2) {
+        for (const rook of rooks) {
+            const jRook = columns.indexOf(rook.charAt(0));
+            if (jRook === jBK) {
+                return true;
+            }
+        }
+    }
+    else if (jWK === jBK && Math.abs(iWK - iBK) === 2) {
+        for (const rook of rooks) {
+            const iRook = parseInt(rook.charAt(1));
+            if (iRook === iBK) {
+                return true;
+            }
+        }
+    }
+
     return false;
 }
-
 
 export const markWhiteSquareBishops = (
     pieces: string[],
@@ -211,18 +241,18 @@ const arroundWhiteKing: Record<string, string[]> = {};
 
 const arrounds = (i: number, j: number): string[] => {
     let arr: string[] = []
-    for (let r=i-1; r <= i+1; r++) {
-        if (r<1 || r>8) continue;
-        for (let c=j-1; c <= j+1; c++) {
-            if (c<0 || r>7 || (r===i && c===j)) continue;
+    for (let r = i - 1; r <= i + 1; r++) {
+        if (r < 1 || r > 8) continue;
+        for (let c = j - 1; c <= j + 1; c++) {
+            if (c < 0 || r > 7 || (r === i && c === j)) continue;
             arr.push(columns[c] + r);
         }
     }
     return arr;
 }
 
-for (let i=1; i <= 8; i++) {
-    for (let j=0; j < 8; j++) {
+for (let i = 1; i <= 8; i++) {
+    for (let j = 0; j < 8; j++) {
         arroundWhiteKing[columns[j] + i] = arrounds(i, j);
     }
 }
