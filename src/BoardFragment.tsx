@@ -13,9 +13,9 @@ interface IProps {
 
 const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, nSquares, testFen }: IProps) => {
 
-  const thread: Worker = useMemo(() =>
-    new Worker(new URL('./Thread.ts', import.meta.url)), []
-  );
+  const thread: Worker = useMemo(() => { 
+    return new Worker(new URL('./Thread.ts', import.meta.url))
+  }, []) ;
 
   const PROBLEMS = `${fromSquare}-PROBLEMS`;
 
@@ -66,8 +66,8 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
         indexOfBlack, 
         lookingForFen,
         // put white king at the start
-        // put black pices behind all the white pieces
-        // put black king as the first of black pieces 
+        // put black pieces behind all the white pieces
+        // put black king at the end of black pieces 
         // put the pieces in the order KQRBNP
         fromSquare,
         toSquare,
@@ -75,6 +75,11 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
         testFen
       } as FindProblem;
       thread.postMessage(JSON.stringify(request));
+    }
+
+    return () => {
+      console.log('.......... UNMOUNT')
+      thread.terminate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -98,6 +103,7 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
         }
       };
     }
+
   }, [thread, scrollToBottom]);
 
   useEffect(() => {

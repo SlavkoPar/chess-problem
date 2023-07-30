@@ -8,6 +8,7 @@ import QN1 from './assets/QN1.png';
 import QN2 from './assets/QN2.png';
 import QN3 from './assets/QN3.png';
 import { Select } from "./Select";
+import { actions } from "./enums";
 
 const { Chess } = require("chess.js");
 
@@ -16,8 +17,9 @@ export type TProblem = {
   firstMove: string;
 };
 
+
 export type FindProblem = {
-  action: string;
+  action: actions;
   pieces: string[];
   indexOfBlack: number,
   lookingForFen: string;
@@ -40,11 +42,8 @@ const App: React.FC = () => {
 
   const [chess, setChess] = useState<ChessInstance>(
     new Chess(fens[0].label)
-    //new Chess("8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1")
-    // new Chess("3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1")
-    //new Chess("8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1")
-    //new Chess("3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1")
   );
+  console.log('>>>>>>>>> RENDERING APP')
 
   return (
     <>
@@ -119,8 +118,6 @@ const App: React.FC = () => {
         </ul>
       </div>
     </>
-
-
   );
 };
 

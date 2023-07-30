@@ -21,7 +21,7 @@ const position: string[] = [];
 
 self.onmessage = (e: MessageEvent<string>) => {
     const findProblem = JSON.parse(e.data) as FindProblem;
-    const { pieces, indexOfBlack, lookingForFen, fromSquare, toSquare, nSquares, testFen } = findProblem;
+    const { action, pieces, indexOfBlack, lookingForFen, fromSquare, toSquare, testFen } = findProblem;
     const whiteSquareBishops: boolean[] = [];
 
     const chess = testFen ? new Chess(testFen) : new Chess(lookingForFen);
@@ -99,36 +99,9 @@ self.onmessage = (e: MessageEvent<string>) => {
         if (applyRook) {
             if (applyRookKing(board))
                 return true;
-
-            /*
-            const whiteKing = whitePieces[0];
-            const blackKing = blackPieces[blackPieces.length - 1];
-            if (whiteKing.i === blackKing.i && Math.abs(whiteKing.j - blackKing.j) === 2) {
-                for (let ind = 0; ind < pieces.length; ind++) {
-                    if (pieces[ind] === 'R') {
-                        const rook = whitePieces[ind]
-                        if (rook.j === blackKing.j) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            if (whiteKing.j === blackKing.j && Math.abs(whiteKing.i - blackKing.i) === 2) {
-                for (let ind = 0; ind < pieces.length; ind++) {
-                    if (pieces[ind] === 'R') {
-                        const rook = whitePieces[ind]
-                        if (rook.i === blackKing.i) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            */
         }
         return false;
     }
-
-    // const blackKingIndex = findProblem.pieces.indexOf('k');
 
     const checkmateIn2 = (): string | null => {
         const whiteMoves1 = chess.moves();
@@ -158,7 +131,6 @@ self.onmessage = (e: MessageEvent<string>) => {
                         // is there any of checkmates a pattern?
                         if (isPattern(chess.board())) {
                             oneOfTheCheckmatesIsPattern = true;
-                            console.log('Pattern black:', white1, black, ' white2:', white2)
                         }
                         chess.undo();
                         if (oneOfTheCheckmatesIsPattern)
