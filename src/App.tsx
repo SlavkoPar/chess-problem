@@ -67,10 +67,10 @@ const App: React.FC = () => {
       </div>
       <br />
       <div className="board-fragments">
-        {/* <BoardFragment lookingForFen={chess.fen()} fromSquare="a8" toSquare="h7" nSquares={8} /> */}
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a8" toSquare="h7" nSquares={8} />
         {/* testFen="8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1"  */}
-        {/* <BoardFragment lookingForFen={chess.fen()} fromSquare="a6" toSquare="h5" nSquares={8} /> */}
-        <BoardFragment lookingForFen={chess.fen()} fromSquare="c2" toSquare="c2" nSquares={8} />
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a6" toSquare="h5" nSquares={8} />
+        <BoardFragment lookingForFen={chess.fen()} fromSquare="a4" toSquare="h1" nSquares={8} />
       </div>
       <div>
         <h3>To decrease number of problems generated, we apply the following rules</h3>
