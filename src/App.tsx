@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import Chessboard from "chessboardjsx";
-import { ChessInstance } from "chess.js/index";
+// import { ChessInstance } from "chess.js/index";
 import BoardFragment from "./BoardFragment";
 
 import QN1 from './assets/QN1.png';
@@ -9,8 +9,9 @@ import QN2 from './assets/QN2.png';
 import QN3 from './assets/QN3.png';
 import { Select } from "./Select";
 import { actions } from "./enums";
+import Komp from "./Komp";
 
-const { Chess } = require("chess.js");
+// const { Chess } = require("chess.js");
 
 export type TProblem = {
   fen: unknown & string;
@@ -40,9 +41,12 @@ const App: React.FC = () => {
   ]
   const fenSelected = 0;
 
-  const [chess, setChess] = useState<ChessInstance>(
-    new Chess(fens[0].label)
-  );
+  //const [chess, setChess] = useState<ChessInstance>(
+    //new Chess(fens[0].label)
+  //);
+
+  const [lookingForFen, setLookingForFen] = useState(fens[0].label);
+
   console.log('>>>>>>>>> RENDERING APP')
 
   return (
@@ -54,7 +58,8 @@ const App: React.FC = () => {
           options={fens}
           onChange={(e, value) => {
             //formik.setFieldValue('source', value)
-            setChess(new Chess(fens[value].label))
+            // setChess(new Chess(fens[value].label))
+            setLookingForFen(fens[value].label);
             // .then(() => { if (editing) formik.submitForm() })
           }}
           value={fenSelected}
@@ -62,14 +67,14 @@ const App: React.FC = () => {
           classes="text-primary"
         />
         <br/>
-        <Chessboard width={200} position={chess.fen()} />
+        <Chessboard width={200} position={lookingForFen} />
       </div>
       <br />
       <div className="board-fragments">
-        <BoardFragment lookingForFen={chess.fen()} fromSquare="a8" toSquare="h7" nSquares={8} />
-        {/* testFen="8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1"  */}
-        <BoardFragment lookingForFen={chess.fen()} fromSquare="a6" toSquare="h5" nSquares={8} />
-        <BoardFragment lookingForFen={chess.fen()} fromSquare="a4" toSquare="h1" nSquares={8} />
+        {/* <Komp lookingForFen={lookingForFen} fromSquare="a4" toSquare="h1" nSquares={8} /> */}
+        <BoardFragment lookingForFen={lookingForFen} fromSquare="a8" toSquare="h7" nSquares={8} /> {/* testFen="8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1"  */}
+        <BoardFragment lookingForFen={lookingForFen} fromSquare="a6" toSquare="h5" nSquares={8} />
+        <BoardFragment lookingForFen={lookingForFen} fromSquare="a4" toSquare="h1" nSquares={8} />
       </div>
       <div>
         <h3>To decrease number of problems generated, we apply the following rules</h3>

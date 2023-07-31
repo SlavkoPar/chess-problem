@@ -44,6 +44,8 @@ self.onmessage = (e: MessageEvent<string>) => {
     if (applyBishopNightFirewall)
         nPatterns++;
 
+    /////////////////////////////////////
+    // TODO Queen the same as Rook ?????
     const applyRook = pieces.includes('R');
     if (applyRook)
         nPatterns++;

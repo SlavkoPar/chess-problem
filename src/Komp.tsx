@@ -11,22 +11,17 @@ interface IProps {
   testFen?: string;
 }
 
-const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, nSquares, testFen }: IProps) => {
+const Komp: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, nSquares, testFen }: IProps) => {
+
 
   const PROBLEMS = `${fromSquare}-PROBLEMS`;
+
   const [chessPositions, setChessPositions] = useState<TProblem[]>([])
+
   const [problemsFound, setProblemsFound] = useState<string[]>([])
-  
+  localStorage.setItem(PROBLEMS, JSON.stringify(problemsFound))
+
   const [fen, setFen] = useState(testFen ? testFen : lookingForFen);
-
-  const thread: Worker = useMemo(() => { 
-    console.log('new worker', lookingForFen)
-    setChessPositions([]);
-    setProblemsFound(arr => []);
-    localStorage.setItem(PROBLEMS, JSON.stringify(problemsFound))
-    return new Worker(new URL('./Thread.ts', import.meta.url))
-  }, [lookingForFen, PROBLEMS]) ;
-
 
   const [scrollToBottom, setScrollToBottom] = useState(true);
   const handleChangeScroll = () => {
@@ -76,37 +71,19 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
         nSquares,
         testFen
       } as FindProblem;
-      thread.postMessage(JSON.stringify(request));
     }
 
     return () => {
       console.log('.......... UNMOUNT')
-      thread.terminate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lookingForFen]);
 
   useEffect(() => {
     if (window.Worker) {
-      let n = 0;
-      thread.onmessage = (e: MessageEvent<string>) => {
-        const response = JSON.parse(e.data) as unknown as TProblem;
-        // console.log({ response });
-        if (++n % 30 === 0) {
-          setFen(response.fen);
-        }
-        if (response.firstMove) {
-          setProblemsFound(arr => [...arr, e.data]);
-          setChessPositions(arr => arr.length > 10
-            ? [response]
-            : arr.length > 4 && scrollToBottom
-              ? [...arr.slice(1, arr.length), response]
-              : [...arr, response]);
-        }
-      };
     }
 
-  }, [thread, scrollToBottom]);
+  }, [scrollToBottom]);
 
   useEffect(() => {
     // bottomRef.current?.lastElementChild?.scrollIntoView({behavior: 'smooth'});
@@ -149,4 +126,4 @@ const BoardFragment: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, 
   );
 };
 
-export default BoardFragment;
+export default Komp;
