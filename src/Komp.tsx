@@ -15,12 +15,20 @@ const Komp: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, nSquares,
 
 
   const PROBLEMS = `${fromSquare}-PROBLEMS`;
-
   const [chessPositions, setChessPositions] = useState<TProblem[]>([])
 
   const [problemsFound, setProblemsFound] = useState<string[]>([])
   localStorage.setItem(PROBLEMS, JSON.stringify(problemsFound))
 
+
+  // const thread = useMemo(() => { 
+  //   console.log('new worker', lookingForFen)
+  //   setChessPositions([]);
+  //   console.log('.......... UNMOUNT', thread)
+  //   return { fromSquare }
+  // }, [fromSquare, lookingForFen]) ;
+
+  
   const [fen, setFen] = useState(testFen ? testFen : lookingForFen);
 
   const [scrollToBottom, setScrollToBottom] = useState(true);
@@ -31,6 +39,8 @@ const Komp: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, nSquares,
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+
+    let thread = { fromSquare }
 
     const getPieces = (fen: string): { pieces: string[], indexOfBlack: number } => {
       const pieces: string[] = [];
@@ -71,10 +81,31 @@ const Komp: React.FC<IProps> = ({ lookingForFen, fromSquare, toSquare, nSquares,
         nSquares,
         testFen
       } as FindProblem;
+
+      let n = 0;
+      const onmessage = (e: MessageEvent<string>) => {
+        const response = JSON.parse(e.data) as unknown as TProblem;
+        // console.log({ response });
+        if (++n % 30 === 0) {
+          setFen(response.fen);
+        }
+        if (response.firstMove) {
+          setProblemsFound(arr => [...arr, e.data]);
+          setChessPositions(arr => arr.length > 10
+            ? [response]
+            : arr.length > 4 && scrollToBottom
+              ? [...arr.slice(1, arr.length), response]
+              : [...arr, response]);
+        }
+      };
+
+      setProblemsFound([]);
+      localStorage.setItem(PROBLEMS, JSON.stringify([])); //problemsFound))      
     }
 
     return () => {
-      console.log('.......... UNMOUNT')
+      console.log('.......... UNMOUNT', thread)
+      thread = { fromSquare: 'terminated' };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lookingForFen]);

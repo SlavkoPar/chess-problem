@@ -45,9 +45,7 @@ const App: React.FC = () => {
     //new Chess(fens[0].label)
   //);
 
-  const [lookingForFen, setLookingForFen] = useState(fens[0].label);
-
-  console.log('>>>>>>>>> RENDERING APP')
+  const [lookingForFen, setLookingForFen] = useState(fens[fenSelected].label);
 
   return (
     <>
@@ -72,9 +70,10 @@ const App: React.FC = () => {
       <br />
       <div className="board-fragments">
         {/* <Komp lookingForFen={lookingForFen} fromSquare="a4" toSquare="h1" nSquares={8} /> */}
-        <BoardFragment lookingForFen={lookingForFen} fromSquare="a8" toSquare="h7" nSquares={8} /> {/* testFen="8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1"  */}
-        <BoardFragment lookingForFen={lookingForFen} fromSquare="a6" toSquare="h5" nSquares={8} />
-        <BoardFragment lookingForFen={lookingForFen} fromSquare="a4" toSquare="h1" nSquares={8} />
+        <BoardFragment lookingForFen={lookingForFen} fromSquare="a8" toSquare="h7" nSquares={8} /> 
+        {/* testFen="8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1"  */}
+        {/* <BoardFragment lookingForFen={lookingForFen} fromSquare="a6" toSquare="h5" nSquares={8} /> */}
+        {/* <BoardFragment lookingForFen={lookingForFen} fromSquare="a4" toSquare="h1" nSquares={8} /> */}
       </div>
       <div>
         <h3>To decrease number of problems generated, we apply the following rules</h3>

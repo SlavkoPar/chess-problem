@@ -45,6 +45,8 @@ export const calcWhitePiecesSquare = (whitePieces: { i: number, j: number }[]): 
 export const anyWhitePieceInsideOfBlackPiecesSquare = (blackPieces: { i: number, j: number }[]): boolean => {
     for (const square of blackPieces) {
         const { i, j } = square;
+        //console.log('i>', iMinW, i, iMaxW, i >= iMinW && i <= iMaxW)
+        //console.log('j>', jMinW, j, jMaxW, j >= jMinW && j <= jMaxW);
         if (i >= iMinW && i <= iMaxW && j >= jMinW && j <= jMaxW) {
             return true;
         }

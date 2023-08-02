@@ -160,6 +160,8 @@ self.onmessage = (e: MessageEvent<string>) => {
     const whitePieces: { i: number, j: number }[] = [];
     const blackPieces: { i: number, j: number }[] = [];
 
+    let goToNextMoveOfTheLastWhitePiece = false;
+
     let lastCheckmate: string | null = null;
 
     function getPosition(pieces: string[], index: number): void {
@@ -175,6 +177,14 @@ self.onmessage = (e: MessageEvent<string>) => {
         // console.log(piece)
         const boardMy = whiteKing ? kingBoard : board;
         for (const square of boardMy) {
+            if (goToNextMoveOfTheLastWhitePiece) {
+                if (pieceColor === 'w') {
+                    goToNextMoveOfTheLastWhitePiece = false;
+                }
+                else {
+                    break;
+                }
+            }
             if (!position.includes(square) && !((type === 'p' && (square.includes('8') || square.includes('1'))))) {
                 const piecePlaced = chess.put({ type, color: pieceColor }, square);
                 // white 'K' is at position[0]
@@ -202,23 +212,10 @@ self.onmessage = (e: MessageEvent<string>) => {
                         }
                     }
                 }
-                /*invalidPos = chess.isCheck() ||
-                    (blackKing &&
-                        (chess.isAttacked(square, 'w') ||
-                            // square.endsWith('1') || square.endsWith('8') ||
-                            // square.startsWith('a') || square.startsWith('h') ||
-                            (pieceColor === 'b' && chess.isAttacked(position[0], 'b')))
-                    ) ||
-                    (isBishop &&
-                        ((whiteSquareBishop && chess.squareColor(square) === 'dark') ||
-                        (!whiteSquareBishop && chess.squareColor(square) === 'light'))
-                    );
-                */
                 if (invalidPos) {
                     const z = chess.remove(square);
                 }
-                else {
-                    if (piecePlaced) {
+                else if (piecePlaced) {
                         let whiteEmptyLines = false;
                         let blackEmptyLines = false;
                         //let whiteHasCheck = false;
@@ -241,28 +238,19 @@ self.onmessage = (e: MessageEvent<string>) => {
                             whiteEmptyLines = emptyLines(whitePieces);
                         }
                         if (!whiteEmptyLines) {
-                            // else if (index >= indexOfBlack) {
-                            // else if (blackKing) {
-                            //     if (blackPieces.length > 1) {
-                            //         // after all the white pieces have been placed
-                            //         blackEmptyLines = emptyLines(blackPieces);
-                            //     }
-                            //     //if (!blackEmptyLines) { // TODO bellow we ask for intersection of white and black pieces
-                            //     //    blackEmptyLines = twoEmptyLinesWhitesBlacks(whitePieces, blackPieces);
-                            //     //}
-                            //     // if (blackKing) {
-                            //     //     // TODO Implement this after the move: ignore if white has no check at the first move
-                            //     //     whiteHasCheck = chess.isAttacked(square, 'w')
-                            //     // }
-                            // }
-                            //if (!whiteEmptyLines && !blackEmptyLines) { //} && !whiteHasCheck) {
+                            // TODO Implement this after the move: ignore if white has no check at the first move
                             // do the job after all the pieces are placed
                             if (pieces.length === 0) {
                                 blackEmptyLines = emptyLines(blackPieces);
                                 if (!blackEmptyLines) {
+                                    const fen = chess.fen();
                                     const intersection = anyWhitePieceInsideOfBlackPiecesSquare(blackPieces);
-                                    if (intersection) {
-                                        const fen = chess.fen();
+                                    if (!intersection) {
+                                        const response = { fen, firstMove: '' } as TProblem;
+                                        self.postMessage(JSON.stringify(response));
+                                        goToNextMoveOfTheLastWhitePiece = true;
+                                    }
+                                    else { 
                                         let firstMove = checkmateIn2();
                                         const isCheckmate = firstMove !== null;
                                         if (isCheckmate) {
@@ -298,7 +286,6 @@ self.onmessage = (e: MessageEvent<string>) => {
                         }
                         const z = chess.remove(square);
                         // const fen2 = chessPosition.fen();
-                    }
                 }
             }
         }
