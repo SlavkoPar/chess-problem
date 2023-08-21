@@ -34,7 +34,7 @@ const App: React.FC = () => {
 
   const fens = [
     { label: "8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1", value: 0 },
-    { label: "8/8/8/1p6/2p5/1RK5/k7/8 w - - 0 1", value: 1 },
+    { label: "3Q4/8/8/1k2N3/4K3/2R5/8/8 w - - 0 1", value: 1 },
     { label: "3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1", value: 2 },
     { label: "8/7n/7r/R5P1/K5k1/3B1N2/5Q2/8 w - - 0 1", value: 3 },
     { label: "3k4/2nBq2n/8/4N1B1/4N3/8/8/1b2K3 w - - 0 1", value: 4 }
