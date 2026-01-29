@@ -32,7 +32,7 @@ export type FindProblem = {
 
 const App: React.FC = () => {
 
-  const fens = [
+  const fens = [ 
     { label: "NRKnk3/8/8/8/8/8/8/8 w - - 0 1", value: 0 },
     { label: "8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1", value: 0 },
     { label: "3Q4/8/8/1k2N3/4K3/2R5/8/8 w - - 0 1", value: 1 },
