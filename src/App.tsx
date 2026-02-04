@@ -33,7 +33,7 @@ export type FindProblem = {
 const App: React.FC = () => {
 
   const fens = [ 
-    { label: "NRKnkn2/8/8/8/8/8/8/8 w - - 0 1", value: 0 },
+    { label: "NQKpkn2/8/8/8/8/8/8/8 w - - 0 1", value: 0 },
     { label: "8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1", value: 0 },
     { label: "3Q4/8/8/1k2N3/4K3/2R5/8/8 w - - 0 1", value: 1 },
     { label: "3Q4/4p3/4knK1/4N3/3P4/8/8/8 w - - 0 1", value: 2 },
@@ -73,7 +73,8 @@ const App: React.FC = () => {
         {/* <Komp lookingForFen={lookingForFen} fromSquare="a4" toSquare="h1" nSquares={8} /> */}
         {/* <BoardFragment lookingForFen={lookingForFen} fromSquare="a8" toSquare="h7" nSquares={8} />  */}
         {/* testFen="8/8/8/1P6/8/2p5/1RK5/k7 w - - 0 1"  */}
-        <BoardFragment lookingForFen={lookingForFen} fromSquare="a6" toSquare="h5" nSquares={8} />
+        <BoardFragment lookingForFen={lookingForFen} fromSquare="a6" toSquare="d6" nSquares={8} />
+        <BoardFragment lookingForFen={lookingForFen} fromSquare="a5" toSquare="d5" nSquares={8} />
         {/* <BoardFragment lookingForFen={lookingForFen} fromSquare="a4" toSquare="h1" nSquares={8} /> */}
       </div>
       <div>
